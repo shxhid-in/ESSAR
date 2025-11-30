@@ -1,0 +1,72 @@
+ESSAR TRAVEL HUB - INVOICE AND BUSINESS MANAGEMENT SOFTWARE
+PROPRIETARY SOFTWARE LICENSE AGREEMENT
+
+Copyright (c) 2025 Mohammed Shahid B. All rights reserved.
+
+NOTICE: This software and associated documentation files (the "Software") are the 
+proprietary and confidential property of Mohammed Shahid B. Unauthorized copying, 
+modification, distribution, or use of this Software, via any medium, is strictly 
+prohibited and may result in severe civil and criminal penalties.
+
+TERMS AND CONDITIONS:
+
+1. PROPRIETARY RIGHTS
+   This Software is protected by copyright laws and international copyright 
+   treaties, as well as other intellectual property laws and treaties. The 
+   Software is licensed, not sold.
+
+2. GRANT OF LICENSE
+   Subject to the terms and conditions of this Agreement, Mohammed Shahid B 
+   grants you a limited, non-exclusive, non-transferable license to use the 
+   Software solely for your internal business purposes.
+
+3. RESTRICTIONS
+   You may NOT:
+   - Copy, reproduce, or duplicate the Software except for backup purposes
+   - Modify, adapt, alter, translate, or create derivative works
+   - Reverse engineer, decompile, disassemble, or otherwise attempt to derive 
+     the source code
+   - Remove, alter, or obscure any proprietary notices, labels, or marks
+   - Rent, lease, lend, sell, sublicense, assign, or otherwise transfer rights
+   - Use the Software for any illegal or unauthorized purpose
+   - Share, distribute, or make the Software available to third parties
+
+4. OWNERSHIP
+   Mohammed Shahid B retains all right, title, and interest in and to the 
+   Software, including all intellectual property rights therein. This license 
+   does not grant you any rights to use Mohammed Shahid B's trademarks, service 
+   marks, or trade names.
+
+5. DATA AND PRIVACY
+   The Software may collect and store data locally on your system. You are 
+   responsible for maintaining the security and confidentiality of your data. 
+   Mohammed Shahid B is not responsible for any data loss or breach.
+
+6. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL 
+   MOHAMMED SHAHID B BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY.
+
+7. TERMINATION
+   This license is effective until terminated. Your rights under this license 
+   will terminate automatically without notice if you fail to comply with any 
+   of its terms. Upon termination, you must destroy all copies of the Software.
+
+8. GOVERNING LAW
+   This Agreement shall be governed by and construed in accordance with the 
+   laws of India, without regard to its conflict of law provisions.
+
+9. CONTACT
+   For questions regarding this license, please contact:
+   Mohammed Shahid B
+   Email: shxxhid.in@gmail.com
+   Phone: +91 9188235958
+
+By installing, copying, or otherwise using the Software, you agree to be bound 
+by the terms of this Agreement. If you do not agree to the terms of this 
+Agreement, do not install or use the Software.
+
+MOHAMMED SHAHID B
+All Rights Reserved
+

@@ -1,0 +1,1548 @@
+<testsuites id="" name="" tests="62" failures="62" skipped="0" errors="0" time="2243.822752">
+<testsuite name="app.spec.ts" timestamp="2025-09-26T09:35:57.081Z" hostname="chromium" tests="10" failures="10" skipped="0" time="187.622" errors="0">
+<testcase name="Application Launch › should launch the application successfully" classname="app.spec.ts" time="19.076">
+<failure message="app.spec.ts:57:3 should launch the application successfully" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:57:3 › Application Launch › should launch the application successfully ──
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Application-Launch-sho-4b990-he-application-successfully-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Application-Launch-sho-4b990-he-application-successfully-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application Launch › should have the correct title" classname="app.spec.ts" time="18.675">
+<failure message="app.spec.ts:65:3 should have the correct title" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:65:3 › Application Launch › should have the correct title ───────────────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Application-Launch-should-have-the-correct-title-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Application-Launch-should-have-the-correct-title-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Application Launch › should load the main application interface" classname="app.spec.ts" time="18.566">
+<failure message="app.spec.ts:70:3 should load the main application interface" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:70:3 › Application Launch › should load the main application interface ──
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Application-Launch-sho-33075--main-application-interface-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Application-Launch-sho-33075--main-application-interface-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Navigation › should navigate between different pages" classname="app.spec.ts" time="18.765">
+<failure message="app.spec.ts:80:3 should navigate between different pages" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:80:3 › Navigation › should navigate between different pages ─────────────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Navigation-should-navigate-between-different-pages-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Navigation-should-navigate-between-different-pages-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Window Controls › should minimize the window" classname="app.spec.ts" time="18.771">
+<failure message="app.spec.ts:103:3 should minimize the window" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:103:3 › Window Controls › should minimize the window ────────────────────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Window-Controls-should-minimize-the-window-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Window-Controls-should-minimize-the-window-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Window Controls › should maximize/restore the window" classname="app.spec.ts" time="18.66">
+<failure message="app.spec.ts:115:3 should maximize/restore the window" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:115:3 › Window Controls › should maximize/restore the window ────────────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Window-Controls-should-maximize-restore-the-window-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Window-Controls-should-maximize-restore-the-window-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Window Controls › should close the application" classname="app.spec.ts" time="18.481">
+<failure message="app.spec.ts:137:3 should close the application" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:137:3 › Window Controls › should close the application ──────────────────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Window-Controls-should-close-the-application-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Window-Controls-should-close-the-application-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Menu System › should have application menu" classname="app.spec.ts" time="19.116">
+<failure message="app.spec.ts:158:3 should have application menu" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:158:3 › Menu System › should have application menu ──────────────────────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Menu-System-should-have-application-menu-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Menu-System-should-have-application-menu-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Menu System › should have Invoices menu with correct items" classname="app.spec.ts" time="18.683">
+<failure message="app.spec.ts:166:3 should have Invoices menu with correct items" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:166:3 › Menu System › should have Invoices menu with correct items ──────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Menu-System-should-have-Invoices-menu-with-correct-items-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Menu-System-should-have-Invoices-menu-with-correct-items-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Menu System › should have Options menu with correct items" classname="app.spec.ts" time="18.829">
+<failure message="app.spec.ts:176:3 should have Options menu with correct items" type="FAILURE">
+<![CDATA[  [chromium] › app.spec.ts:176:3 › Menu System › should have Options menu with correct items ───────
+
+    Error: Electron API not ready after 10 seconds
+
+      15 |       if (attempts > maxAttempts) {
+      16 |         clearInterval(interval);
+    > 17 |         reject(new Error('Electron API not ready after 10 seconds'));
+         |                ^
+      18 |         return;
+      19 |       }
+      20 |       
+        at Timeout.<anonymous> (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\app.spec.ts:17:16)
+
+    Error Context: ..\test-results\app-Menu-System-should-have-Options-menu-with-correct-items-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\app-Menu-System-should-have-Options-menu-with-correct-items-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="customers.spec.ts" timestamp="2025-09-26T09:35:57.081Z" hostname="chromium" tests="8" failures="8" skipped="0" time="283.218" errors="0">
+<testcase name="Customer Management › should display customer management page" classname="customers.spec.ts" time="35.398">
+<failure message="customers.spec.ts:45:3 should display customer management page" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:45:3 › Customer Management › should display customer management page 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Managem-6b524-ay-customer-management-page-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Managem-6b524-ay-customer-management-page-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should add a new customer" classname="customers.spec.ts" time="35.346">
+<failure message="customers.spec.ts:56:3 should add a new customer" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:56:3 › Customer Management › should add a new customer ────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Management-should-add-a-new-customer-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Management-should-add-a-new-customer-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should validate customer form inputs" classname="customers.spec.ts" time="35.455">
+<failure message="customers.spec.ts:71:3 should validate customer form inputs" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:71:3 › Customer Management › should validate customer form inputs ─
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Managem-26ae9-lidate-customer-form-inputs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Managem-26ae9-lidate-customer-form-inputs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should edit an existing customer" classname="customers.spec.ts" time="35.28">
+<failure message="customers.spec.ts:79:3 should edit an existing customer" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:79:3 › Customer Management › should edit an existing customer ─────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Managem-e8d35-d-edit-an-existing-customer-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Managem-e8d35-d-edit-an-existing-customer-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should display customer list with proper data" classname="customers.spec.ts" time="35.639">
+<failure message="customers.spec.ts:104:3 should display customer list with proper data" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:104:3 › Customer Management › should display customer list with proper data 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Managem-b0b7c-tomer-list-with-proper-data-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Managem-b0b7c-tomer-list-with-proper-data-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should handle customer search/filtering" classname="customers.spec.ts" time="35.318">
+<failure message="customers.spec.ts:115:3 should handle customer search/filtering" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:115:3 › Customer Management › should handle customer search/filtering 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Managem-5dd0e-e-customer-search-filtering-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Managem-5dd0e-e-customer-search-filtering-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should show customer count" classname="customers.spec.ts" time="35.434">
+<failure message="customers.spec.ts:134:3 should show customer count" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:134:3 › Customer Management › should show customer count ──────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Management-should-show-customer-count-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Management-should-show-customer-count-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Customer Management › should handle customer deletion" classname="customers.spec.ts" time="35.348">
+<failure message="customers.spec.ts:140:3 should handle customer deletion" type="FAILURE">
+<![CDATA[  [chromium] › customers.spec.ts:140:3 › Customer Management › should handle customer deletion ─────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\customers.spec.ts:24:6
+
+    Error Context: ..\test-results\customers-Customer-Managem-00dfe-ld-handle-customer-deletion-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\customers-Customer-Managem-00dfe-ld-handle-customer-deletion-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="example.spec.ts" timestamp="2025-09-26T09:35:57.081Z" hostname="chromium" tests="2" failures="2" skipped="0" time="61.236" errors="0">
+<testcase name="custom frame should minimize the mainWindow" classname="example.spec.ts" time="30.599">
+<failure message="example.spec.ts:33:1 custom frame should minimize the mainWindow" type="FAILURE">
+<![CDATA[  [chromium] › example.spec.ts:33:1 › custom frame should minimize the mainWindow ──────────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      18 | }
+      19 |
+    > 20 | test.beforeEach(async () => {
+         |      ^
+      21 |   electronApp = await _electron.launch({
+      22 |     args: ['.'],
+      23 |     env: { NODE_ENV: 'development' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\example.spec.ts:20:6
+
+    Error: page.evaluate: Target page, context or browser has been closed
+
+       7 |   return new Promise((resolve) => {
+       8 |     const interval = setInterval(async () => {
+    >  9 |       const electronBridge = await mainPage.evaluate(() => {
+         |                                             ^
+      10 |         return (window as Window & { electron?: any }).electron;
+      11 |       });
+      12 |       if (electronBridge) {
+        at Timeout._onTimeout (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\example.spec.ts:9:45)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\example-custom-frame-should-minimize-the-mainWindow-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\example-custom-frame-should-minimize-the-mainWindow-chromium\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\example-custom-frame-should-minimize-the-mainWindow-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\example-custom-frame-should-minimize-the-mainWindow-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\example-custom-frame-should-minimize-the-mainWindow-chromium\test-failed-2.png]]
+
+[[ATTACHMENT|test-results\example-custom-frame-should-minimize-the-mainWindow-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="should create a custom menu" classname="example.spec.ts" time="30.637">
+<failure message="example.spec.ts:41:1 should create a custom menu" type="FAILURE">
+<![CDATA[  [chromium] › example.spec.ts:41:1 › should create a custom menu ──────────────────────────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      18 | }
+      19 |
+    > 20 | test.beforeEach(async () => {
+         |      ^
+      21 |   electronApp = await _electron.launch({
+      22 |     args: ['.'],
+      23 |     env: { NODE_ENV: 'development' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\example.spec.ts:20:6
+
+    Error: page.evaluate: Target page, context or browser has been closed
+
+       7 |   return new Promise((resolve) => {
+       8 |     const interval = setInterval(async () => {
+    >  9 |       const electronBridge = await mainPage.evaluate(() => {
+         |                                             ^
+      10 |         return (window as Window & { electron?: any }).electron;
+      11 |       });
+      12 |       if (electronBridge) {
+        at Timeout._onTimeout (C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\example.spec.ts:9:45)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\example-should-create-a-custom-menu-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\example-should-create-a-custom-menu-chromium\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\example-should-create-a-custom-menu-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\example-should-create-a-custom-menu-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\example-should-create-a-custom-menu-chromium\test-failed-2.png]]
+
+[[ATTACHMENT|test-results\example-should-create-a-custom-menu-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="invoices.spec.ts" timestamp="2025-09-26T09:35:57.081Z" hostname="chromium" tests="9" failures="9" skipped="0" time="318.312" errors="0">
+<testcase name="Invoice Management › should display invoice management page" classname="invoices.spec.ts" time="35.512">
+<failure message="invoices.spec.ts:45:3 should display invoice management page" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:45:3 › Invoice Management › should display invoice management page ─
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Managemen-cbdf9-lay-invoice-management-page-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Managemen-cbdf9-lay-invoice-management-page-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should open invoice creator modal" classname="invoices.spec.ts" time="35.332">
+<failure message="invoices.spec.ts:56:3 should open invoice creator modal" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:56:3 › Invoice Management › should open invoice creator modal ──────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Managemen-25b52--open-invoice-creator-modal-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Managemen-25b52--open-invoice-creator-modal-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should create a new invoice" classname="invoices.spec.ts" time="35.263">
+<failure message="invoices.spec.ts:69:3 should create a new invoice" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:69:3 › Invoice Management › should create a new invoice ────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Management-should-create-a-new-invoice-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Management-should-create-a-new-invoice-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should validate invoice form inputs" classname="invoices.spec.ts" time="35.38">
+<failure message="invoices.spec.ts:100:3 should validate invoice form inputs" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:100:3 › Invoice Management › should validate invoice form inputs ───
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Managemen-39b7f-alidate-invoice-form-inputs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Managemen-39b7f-alidate-invoice-form-inputs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should display invoice list with proper data" classname="invoices.spec.ts" time="35.42">
+<failure message="invoices.spec.ts:111:3 should display invoice list with proper data" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:111:3 › Invoice Management › should display invoice list with proper data 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Managemen-ea21c-voice-list-with-proper-data-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Managemen-ea21c-voice-list-with-proper-data-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should view invoice details" classname="invoices.spec.ts" time="35.309">
+<failure message="invoices.spec.ts:122:3 should view invoice details" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:122:3 › Invoice Management › should view invoice details ───────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Management-should-view-invoice-details-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Management-should-view-invoice-details-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should edit an existing invoice" classname="invoices.spec.ts" time="35.278">
+<failure message="invoices.spec.ts:150:3 should edit an existing invoice" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:150:3 › Invoice Management › should edit an existing invoice ───────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Management-should-edit-an-existing-invoice-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Management-should-edit-an-existing-invoice-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should delete an invoice" classname="invoices.spec.ts" time="35.336">
+<failure message="invoices.spec.ts:185:3 should delete an invoice" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:185:3 › Invoice Management › should delete an invoice ──────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Management-should-delete-an-invoice-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Management-should-delete-an-invoice-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Invoice Management › should download invoice as PDF" classname="invoices.spec.ts" time="35.482">
+<failure message="invoices.spec.ts:219:3 should download invoice as PDF" type="FAILURE">
+<![CDATA[  [chromium] › invoices.spec.ts:219:3 › Invoice Management › should download invoice as PDF ────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\invoices.spec.ts:24:6
+
+    Error Context: ..\test-results\invoices-Invoice-Management-should-download-invoice-as-PDF-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\invoices-Invoice-Management-should-download-invoice-as-PDF-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="reports.spec.ts" timestamp="2025-09-26T09:35:57.081Z" hostname="chromium" tests="13" failures="13" skipped="0" time="460.785" errors="0">
+<testcase name="Reports and Analytics › should display reports page" classname="reports.spec.ts" time="35.338">
+<failure message="reports.spec.ts:45:3 should display reports page" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:45:3 › Reports and Analytics › should display reports page ──────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analytics-should-display-reports-page-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analytics-should-display-reports-page-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display all report tabs" classname="reports.spec.ts" time="35.397">
+<failure message="reports.spec.ts:53:3 should display all report tabs" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:53:3 › Reports and Analytics › should display all report tabs ───────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analytics-should-display-all-report-tabs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analytics-should-display-all-report-tabs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should navigate between report tabs" classname="reports.spec.ts" time="35.379">
+<failure message="reports.spec.ts:63:3 should navigate between report tabs" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:63:3 › Reports and Analytics › should navigate between report tabs ──
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-fa582-avigate-between-report-tabs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-fa582-avigate-between-report-tabs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display business KPIs in Overview tab" classname="reports.spec.ts" time="35.274">
+<failure message="reports.spec.ts:89:3 should display business KPIs in Overview tab" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:89:3 › Reports and Analytics › should display business KPIs in Overview tab 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-0f1d4-siness-KPIs-in-Overview-tab-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-0f1d4-siness-KPIs-in-Overview-tab-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display revenue analytics" classname="reports.spec.ts" time="35.39">
+<failure message="reports.spec.ts:104:3 should display revenue analytics" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:104:3 › Reports and Analytics › should display revenue analytics ────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-b5bde-d-display-revenue-analytics-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-b5bde-d-display-revenue-analytics-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display service performance metrics" classname="reports.spec.ts" time="36.284">
+<failure message="reports.spec.ts:116:3 should display service performance metrics" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:116:3 › Reports and Analytics › should display service performance metrics 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-a9d32-service-performance-metrics-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-a9d32-service-performance-metrics-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display customer analytics" classname="reports.spec.ts" time="35.58">
+<failure message="reports.spec.ts:127:3 should display customer analytics" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:127:3 › Reports and Analytics › should display customer analytics ───
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-c728a--display-customer-analytics-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-c728a--display-customer-analytics-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display financial insights" classname="reports.spec.ts" time="35.266">
+<failure message="reports.spec.ts:138:3 should display financial insights" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:138:3 › Reports and Analytics › should display financial insights ───
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-0cdec--display-financial-insights-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-0cdec--display-financial-insights-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display time-based analysis" classname="reports.spec.ts" time="35.387">
+<failure message="reports.spec.ts:150:3 should display time-based analysis" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:150:3 › Reports and Analytics › should display time-based analysis ──
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-e47f3-display-time-based-analysis-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-e47f3-display-time-based-analysis-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should handle data loading states" classname="reports.spec.ts" time="35.456">
+<failure message="reports.spec.ts:162:3 should handle data loading states" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:162:3 › Reports and Analytics › should handle data loading states ───
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-61ced--handle-data-loading-states-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-61ced--handle-data-loading-states-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should display charts and visualizations" classname="reports.spec.ts" time="35.37">
+<failure message="reports.spec.ts:176:3 should display charts and visualizations" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:176:3 › Reports and Analytics › should display charts and visualizations 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-000c4-y-charts-and-visualizations-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-000c4-y-charts-and-visualizations-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should handle empty data states" classname="reports.spec.ts" time="35.28">
+<failure message="reports.spec.ts:190:3 should handle empty data states" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:190:3 › Reports and Analytics › should handle empty data states ─────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-c05bf-ld-handle-empty-data-states-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-c05bf-ld-handle-empty-data-states-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Reports and Analytics › should maintain tab state during navigation" classname="reports.spec.ts" time="35.384">
+<failure message="reports.spec.ts:204:3 should maintain tab state during navigation" type="FAILURE">
+<![CDATA[  [chromium] › reports.spec.ts:204:3 › Reports and Analytics › should maintain tab state during navigation 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\reports.spec.ts:24:6
+
+    Error Context: ..\test-results\reports-Reports-and-Analyt-63dae-tab-state-during-navigation-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\reports-Reports-and-Analyt-63dae-tab-state-during-navigation-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="settings.spec.ts" timestamp="2025-09-26T09:35:57.081Z" hostname="chromium" tests="20" failures="20" skipped="0" time="708.758" errors="0">
+<testcase name="Settings Management › should display settings page" classname="settings.spec.ts" time="35.289">
+<failure message="settings.spec.ts:45:3 should display settings page" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:45:3 › Settings Management › should display settings page ──────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Management-should-display-settings-page-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Management-should-display-settings-page-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › should display settings navigation tabs" classname="settings.spec.ts" time="35.587">
+<failure message="settings.spec.ts:53:3 should display settings navigation tabs" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:53:3 › Settings Management › should display settings navigation tabs 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-9d570-ay-settings-navigation-tabs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-9d570-ay-settings-navigation-tabs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › should navigate between settings tabs" classname="settings.spec.ts" time="35.47">
+<failure message="settings.spec.ts:60:3 should navigate between settings tabs" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:60:3 › Settings Management › should navigate between settings tabs ─
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-42d5e-igate-between-settings-tabs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-42d5e-igate-between-settings-tabs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Services Management › should display services management interface" classname="settings.spec.ts" time="35.346">
+<failure message="settings.spec.ts:75:5 should display services management interface" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:75:5 › Settings Management › Services Management › should display services management interface 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-0c367-rvices-management-interface-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-0c367-rvices-management-interface-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Services Management › should add a new service" classname="settings.spec.ts" time="35.442">
+<failure message="settings.spec.ts:86:5 should add a new service" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:86:5 › Settings Management › Services Management › should add a new service 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-d8d42-nt-should-add-a-new-service-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-d8d42-nt-should-add-a-new-service-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Services Management › should validate service form inputs" classname="settings.spec.ts" time="35.324">
+<failure message="settings.spec.ts:101:5 should validate service form inputs" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:101:5 › Settings Management › Services Management › should validate service form inputs 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-5cfbe-alidate-service-form-inputs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-5cfbe-alidate-service-form-inputs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Services Management › should edit an existing service" classname="settings.spec.ts" time="35.708">
+<failure message="settings.spec.ts:112:5 should edit an existing service" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:112:5 › Settings Management › Services Management › should edit an existing service 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-00bbf-ld-edit-an-existing-service-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-00bbf-ld-edit-an-existing-service-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Services Management › should delete a service" classname="settings.spec.ts" time="35.393">
+<failure message="settings.spec.ts:138:5 should delete a service" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:138:5 › Settings Management › Services Management › should delete a service 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-f4530-ent-should-delete-a-service-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-f4530-ent-should-delete-a-service-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Currency Management › should display currency management interface" classname="settings.spec.ts" time="35.332">
+<failure message="settings.spec.ts:168:5 should display currency management interface" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:168:5 › Settings Management › Currency Management › should display currency management interface 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-94dd7-rrency-management-interface-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-94dd7-rrency-management-interface-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Currency Management › should add a new currency" classname="settings.spec.ts" time="35.386">
+<failure message="settings.spec.ts:179:5 should add a new currency" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:179:5 › Settings Management › Currency Management › should add a new currency 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-d89ce-t-should-add-a-new-currency-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-d89ce-t-should-add-a-new-currency-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Currency Management › should validate currency form inputs" classname="settings.spec.ts" time="35.634">
+<failure message="settings.spec.ts:196:5 should validate currency form inputs" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:196:5 › Settings Management › Currency Management › should validate currency form inputs 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-f434f-lidate-currency-form-inputs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-f434f-lidate-currency-form-inputs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Currency Management › should edit an existing currency" classname="settings.spec.ts" time="35.376">
+<failure message="settings.spec.ts:212:5 should edit an existing currency" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:212:5 › Settings Management › Currency Management › should edit an existing currency 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-a271b-d-edit-an-existing-currency-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-a271b-d-edit-an-existing-currency-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Currency Management › should display default currencies" classname="settings.spec.ts" time="35.536">
+<failure message="settings.spec.ts:240:5 should display default currencies" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:240:5 › Settings Management › Currency Management › should display default currencies 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-7871d--display-default-currencies-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-7871d--display-default-currencies-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should display preferences interface" classname="settings.spec.ts" time="35.326">
+<failure message="settings.spec.ts:254:5 should display preferences interface" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:254:5 › Settings Management › Preferences Management › should display preferences interface 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-52c76-splay-preferences-interface-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-52c76-splay-preferences-interface-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should display default currency setting" classname="settings.spec.ts" time="35.507">
+<failure message="settings.spec.ts:262:5 should display default currency setting" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:262:5 › Settings Management › Preferences Management › should display default currency setting 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-2d121-ay-default-currency-setting-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-2d121-ay-default-currency-setting-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should display base currency setting" classname="settings.spec.ts" time="35.397">
+<failure message="settings.spec.ts:270:5 should display base currency setting" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:270:5 › Settings Management › Preferences Management › should display base currency setting 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-2c46f-splay-base-currency-setting-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-2c46f-splay-base-currency-setting-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should display tax rate setting" classname="settings.spec.ts" time="35.382">
+<failure message="settings.spec.ts:278:5 should display tax rate setting" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:278:5 › Settings Management › Preferences Management › should display tax rate setting 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-f930f-ld-display-tax-rate-setting-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-f930f-ld-display-tax-rate-setting-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should display invoice prefix setting" classname="settings.spec.ts" time="35.431">
+<failure message="settings.spec.ts:286:5 should display invoice prefix setting" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:286:5 › Settings Management › Preferences Management › should display invoice prefix setting 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-f3fa4-play-invoice-prefix-setting-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-f3fa4-play-invoice-prefix-setting-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should save preferences" classname="settings.spec.ts" time="35.373">
+<failure message="settings.spec.ts:294:5 should save preferences" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:294:5 › Settings Management › Preferences Management › should save preferences 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-b17ca-ent-should-save-preferences-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-b17ca-ent-should-save-preferences-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Settings Management › Preferences Management › should validate preferences inputs" classname="settings.spec.ts" time="35.519">
+<failure message="settings.spec.ts:311:5 should validate preferences inputs" type="FAILURE">
+<![CDATA[  [chromium] › settings.spec.ts:311:5 › Settings Management › Preferences Management › should validate preferences inputs 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      22 | }
+      23 |
+    > 24 | test.beforeEach(async () => {
+         |      ^
+      25 |   electronApp = await _electron.launch({
+      26 |     args: ['.'],
+      27 |     env: { NODE_ENV: 'test' },
+        at C:\Users\User Unknown\Desktop\Works\Essar-Billing\e2e\settings.spec.ts:24:6
+
+    Error Context: ..\test-results\settings-Settings-Manageme-ba3f4-validate-preferences-inputs-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\settings-Settings-Manageme-ba3f4-validate-preferences-inputs-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
