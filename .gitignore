@@ -28,3 +28,9 @@ nextSteps.txt
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+dist
+dist-electron
+dist-react
+
+test-results
