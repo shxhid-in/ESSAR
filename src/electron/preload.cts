@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteInvoice: (id: number) => ipcRenderer.invoke('delete-invoice', { id }),
   printInvoice: (invoice: any) => ipcRenderer.invoke('print-invoice', { invoice }),
   generatePDF: (htmlContent: string, filename: string) => ipcRenderer.invoke('generate-pdf', { htmlContent, filename }),
+  getSignatureBase64: () => ipcRenderer.invoke('get-signature-base64'),
+  getLogoBase64: () => ipcRenderer.invoke('get-logo-base64'),
   
   // Customer operations
   getCustomers: () => ipcRenderer.invoke('get-customers'),

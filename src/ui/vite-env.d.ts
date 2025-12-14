@@ -10,6 +10,8 @@ interface Window {
     deleteInvoice: (id: number) => Promise<boolean>;
     printInvoice: (invoice: any) => Promise<void>;
     generatePDF: (htmlContent: string, filename: string) => Promise<{ success: boolean; filePath?: string; message?: string; error?: string }>;
+    getSignatureBase64: () => Promise<string>;
+    getLogoBase64: () => Promise<string>;
     
     // Customer operations
     getCustomers: () => Promise<any[]>;

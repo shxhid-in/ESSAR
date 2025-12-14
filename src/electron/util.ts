@@ -74,6 +74,14 @@ interface EventPayloadMapping {
     invoice: any;
     return: void;
   };
+  
+  'get-signature-base64': {
+    return: string;
+  };
+
+  'get-logo-base64': {
+    return: string;
+  };
 
   'get-daily-sales': {
     date: string;

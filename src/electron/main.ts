@@ -2,8 +2,11 @@ import { app, BrowserWindow } from 'electron';
 import { createMenu } from './menu.js';
 import { createTray } from './tray.js';
 import { ipcMainHandle, ipcMainOn, isDev } from './util.js';
-import { getPreloadPath, getUIPath } from './pathResolver.js';
+import { getPreloadPath, getUIPath, getAssetPath } from './pathResolver.js';
 import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency } from './database.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 app.whenReady().then(() => {
   const mainWindow = new BrowserWindow({
@@ -131,6 +134,14 @@ ipcMainHandle('get-business-kpis', async () => {
   ipcMainHandle('delete-invoice', async (payload) => {
     return deleteInvoice(payload.id);
   });
+ipcMainHandle('get-signature-base64', async () => {
+  return getSignatureAsBase64();
+});
+
+ipcMainHandle('get-logo-base64', async () => {
+  return getPNGLogoAsBase64();
+});
+
 ipcMainHandle('print-invoice', async (payload) => {
   const win = new BrowserWindow({ show: false });
   
@@ -312,6 +323,68 @@ ipcMainOn('navigate', (payload) => {
   });
 });
 
+// Function to get signature as base64
+function getSignatureAsBase64(): string {
+  try {
+    const assetPath = getAssetPath();
+    const signaturePath = path.join(assetPath, 'seal&signature.svg');
+    
+    // Log paths for debugging
+    console.log('Asset path:', assetPath);
+    console.log('Signature path:', signaturePath);
+    console.log('File exists:', fs.existsSync(signaturePath));
+    
+    if (!fs.existsSync(signaturePath)) {
+      console.error('Signature file not found at:', signaturePath);
+      // Try alternative paths
+      const altPath1 = path.join(app.getAppPath(), 'src', 'assets', 'seal&signature.svg');
+      const altPath2 = path.join(path.dirname(app.getPath('exe')), 'resources', 'src', 'assets', 'seal&signature.svg');
+      console.log('Trying alternative path 1:', altPath1, 'exists:', fs.existsSync(altPath1));
+      console.log('Trying alternative path 2:', altPath2, 'exists:', fs.existsSync(altPath2));
+      return '';
+    }
+    
+    const svg = fs.readFileSync(signaturePath, 'utf8');
+    const base64 = Buffer.from(svg).toString('base64');
+    console.log('Signature loaded successfully, base64 length:', base64.length);
+    return `data:image/svg+xml;base64,${base64}`;
+  } catch (error) {
+    console.error('Error loading signature:', error);
+    return ''; // Return empty string if signature can't be loaded
+  }
+}
+
+// Function to get PNG logo as base64
+function getPNGLogoAsBase64(): string {
+  try {
+    const assetPath = getAssetPath();
+    const logoPath = path.join(assetPath, 'letterpadIcon.png');
+    
+    // Log paths for debugging
+    console.log('Asset path:', assetPath);
+    console.log('Logo path:', logoPath);
+    console.log('File exists:', fs.existsSync(logoPath));
+    
+    if (!fs.existsSync(logoPath)) {
+      console.error('Logo file not found at:', logoPath);
+      // Try alternative paths
+      const altPath1 = path.join(app.getAppPath(), 'src', 'assets', 'letterpadIcon.png');
+      const altPath2 = path.join(path.dirname(app.getPath('exe')), 'resources', 'src', 'assets', 'letterpadIcon.png');
+      console.log('Trying alternative path 1:', altPath1, 'exists:', fs.existsSync(altPath1));
+      console.log('Trying alternative path 2:', altPath2, 'exists:', fs.existsSync(altPath2));
+      return '';
+    }
+    
+    const pngBuffer = fs.readFileSync(logoPath);
+    const base64 = pngBuffer.toString('base64');
+    console.log('Logo loaded successfully, base64 length:', base64.length);
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    console.error('Error loading logo:', error);
+    return ''; // Return empty string if logo can't be loaded
+  }
+}
+
 function generateHTML(invoice: Invoice): string {
   // URL encode the HTML content
   return encodeURIComponent(`<!DOCTYPE html>
@@ -484,21 +557,29 @@ function generateHTML(invoice: Invoice): string {
         }
         .signatory-footer {
           text-align: right;
-          margin: 15px 0 80px 0 ;
+          margin: 15px 0 5px 0;
         }
         .signatory-right {
           font-size: 14px;
           color: #000;
+          margin-bottom: 5px;
         }
         .signature-row {
           display: flex;
           justify-content: space-between;
-          margin: 8px 0;
+          margin: 5px 0;
         }
         .signature-label {
           font-size: 14px;
           font-weight: normal;
           color: #666;
+        }
+        .signature-image {
+          max-width: 150px;
+          max-height: 80px;
+          height: auto;
+          object-fit: contain;
+          margin: 5px 0;
         }
         .address-footer {
           text-align: center;
@@ -608,13 +689,21 @@ function generateHTML(invoice: Invoice): string {
           <div class="separator-line"></div>
           
           <div class="signatory-footer">
-            <div class="signatory-right">For ESSAR Travel Hub</div>
+            <div></div>
+            <div style="text-align: right;">
+              <div class="signatory-right">For ESSAR Travel Hub</div>
+              ${(() => {
+                const signatureBase64 = getSignatureAsBase64();
+                return signatureBase64 ? `<img src="${signatureBase64}" alt="Authorised Signature" class="signature-image" />` : '';
+              })()}
+            </div>
           </div>
           
-
           <div class="signature-row">
             <div class="signature-label">Customer Signature</div>
-            <div class="signature-label">Authorised Signature</div>
+            <div style="text-align: right;">
+              <div class="signature-label">Authorised Signature</div>
+            </div>
           </div>
           
           <div class="separator-line"></div>

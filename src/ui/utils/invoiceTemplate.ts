@@ -1,14 +1,18 @@
+// Import signature SVG as raw string for browser context
+import signatureSvgRaw from '../../assets/seal&signature.svg?raw';
+
 // Robust logo system with multiple fallbacks
-const getLogoAsBase64 = (): string => {
+const getLogoAsBase64 = async (): Promise<string> => {
   try {
     // Method 1: Try PNG first (most reliable for PDFs)
-    const pngBase64 = getPNGLogoBase64();
+    const pngBase64 = await getPNGLogoBase64();
     if (pngBase64) {
       // Using PNG logo for PDF
       return pngBase64;
     }
   } catch (error) {
     // PNG logo failed, trying SVG fallback
+    console.warn('PNG logo failed, trying SVG fallback:', error);
   }
 
   try {
@@ -20,6 +24,7 @@ const getLogoAsBase64 = (): string => {
     }
   } catch (error) {
     // SVG logo failed, trying text fallback
+    console.warn('SVG logo failed, trying text fallback:', error);
   }
 
   // Method 3: Text-based fallback (guaranteed to work)
@@ -62,8 +67,27 @@ const getTextLogoBase64 = (): string => {
   return 'data:image/svg+xml;base64,' + btoa(textSvg);
 };
 
-export const generateInvoiceHTML = (invoice: any): string => {
-  const logoBase64 = getLogoAsBase64();
+// Function to get signature as base64
+const getSignatureAsBase64 = (): string => {
+  try {
+    // In browser context, we import the SVG as a raw string
+    if (signatureSvgRaw && typeof signatureSvgRaw === 'string') {
+      const base64 = btoa(signatureSvgRaw);
+      const dataUri = 'data:image/svg+xml;base64,' + base64;
+      console.log('Signature loaded successfully, base64 length:', base64.length);
+      return dataUri;
+    }
+    console.warn('Signature SVG raw string is not available');
+    return '';
+  } catch (error) {
+    console.error('Error loading signature for browser:', error);
+    return '';
+  }
+};
+
+export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
+  const logoBase64 = await getLogoAsBase64();
+  const signatureBase64 = getSignatureAsBase64();
   
   return `
     <!DOCTYPE html>
@@ -241,21 +265,29 @@ export const generateInvoiceHTML = (invoice: any): string => {
           }
           .signatory-footer {
             text-align: right;
-            margin: 15px 0 80px 0 ;
+            margin: 15px 0 5px 0;
           }
           .signatory-right {
             font-size: 14px;
             color: #000;
+            margin-bottom: 5px;
           }
           .signature-row {
             display: flex;
             justify-content: space-between;
-            margin: 8px 0;
+            margin: 5px 0;
           }
           .signature-label {
             font-size: 14px;
             font-weight: normal;
             color: #666;
+          }
+          .signature-image {
+            max-width: 150px;
+            max-height: 80px;
+            height: auto;
+            object-fit: contain;
+            margin: 5px 0;
           }
           .address-footer {
             text-align: center;
@@ -371,12 +403,17 @@ export const generateInvoiceHTML = (invoice: any): string => {
             <div class="separator-line"></div>
             
             <div class="signatory-footer">
-              <div class="signatory-right">For ESSAR Travel Hub</div>
+              <div style="text-align: right;">
+                <div class="signatory-right">For ESSAR Travel Hub</div>
+                ${signatureBase64 ? `<img src="${signatureBase64}" alt="Authorised Signature" class="signature-image" />` : ''}
+              </div>
             </div>
             
             <div class="signature-row">
               <div class="signature-label">Customer Signature</div>
-              <div class="signature-label">Authorised Signature</div>
+              <div style="text-align: right;">
+                <div class="signature-label">Authorised Signature</div>
+              </div>
             </div>
             
             <div class="separator-line"></div>
@@ -429,7 +466,7 @@ export const downloadInvoicePDF = async (invoice: any) => {
 export const downloadInvoicePDFDirect = async (invoice: any) => {
   try {
     // Using direct PDF download method
-    const htmlContent = generateInvoiceHTML(invoice);
+    const htmlContent = await generateInvoiceHTML(invoice);
     const filename = `Invoice_${invoice.invoiceNumber}`;
     
     // Create a new window with the HTML content
@@ -495,7 +532,7 @@ export const downloadInvoicePDFDirect = async (invoice: any) => {
 export const downloadInvoicePDFModern = async (invoice: any) => {
   try {
     // Using modern PDF download method
-    const htmlContent = generateInvoiceHTML(invoice);
+    const htmlContent = await generateInvoiceHTML(invoice);
     const filename = `Invoice_${invoice.invoiceNumber}`;
     
     // Create a hidden iframe
