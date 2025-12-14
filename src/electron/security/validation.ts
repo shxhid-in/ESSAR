@@ -45,8 +45,8 @@ export function validateCurrencyCode(code: string): boolean {
 
 // Validate invoice number format
 export function validateInvoiceNumber(invoiceNumber: string): boolean {
-  // YYYYMMDDNNN format (11 digits: 4 year + 2 month + 2 day + 3 serial)
-  const invoiceRegex = /^\d{4}\d{2}\d{2}\d{3}$/;
+  // YYYYMMNNNNN format (11 digits: 4 year + 2 month + 5 serial)
+  const invoiceRegex = /^\d{4}\d{2}\d{5}$/;
   return invoiceRegex.test(invoiceNumber);
 }
 

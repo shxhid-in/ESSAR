@@ -932,28 +932,25 @@ export const settingsDB = {
 
 function generateInvoiceNumber(): string {
   const today = new Date();
-  const dd = String(today.getDate()).padStart(2, '0');
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const yyyy = String(today.getFullYear());
-  // YYYYMMDDNNN format (4 year + 2 month + 2 day + 3 serial)
-  const dateStr = `${yyyy}${mm}${dd}`;
+  // YYYYMMNNNNN format (4 year + 2 month + 5 serial = 11 digits total)
+  const dateStr = `${yyyy}${mm}`;
   
-  // Get or create sequence for today
-  const todayStr = today.toISOString().split('T')[0];
-  let sequence = db.prepare("SELECT current_sequence FROM invoice_sequence WHERE last_reset_date = ?").get(todayStr) as { current_sequence: number } | undefined;
+  // Get or create global sequence (never resets)
+  let sequence = db.prepare("SELECT current_sequence FROM invoice_sequence WHERE id = 1").get() as { current_sequence: number } | undefined;
   
   if (!sequence) {
-    // Reset sequence for new day
-    db.prepare("DELETE FROM invoice_sequence").run();
-    db.prepare("INSERT INTO invoice_sequence (current_sequence, last_reset_date) VALUES (0, ?)").run(todayStr);
+    // Initialize sequence if it doesn't exist
+    db.prepare("INSERT OR IGNORE INTO invoice_sequence (id, current_sequence, last_reset_date) VALUES (1, 0, NULL)").run();
     sequence = { current_sequence: 0 };
   }
   
-  // Increment sequence
+  // Increment sequence (never resets, goes infinitely)
   const newSequence = sequence.current_sequence + 1;
-  db.prepare("UPDATE invoice_sequence SET current_sequence = ? WHERE last_reset_date = ?").run(newSequence, todayStr);
+  db.prepare("UPDATE invoice_sequence SET current_sequence = ? WHERE id = 1").run(newSequence);
   
-  const serialNumber = String(newSequence).padStart(3, '0');
+  const serialNumber = String(newSequence).padStart(5, '0');
   return `${dateStr}${serialNumber}`;
 }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Invoice } from '../../../electron/database';
 
 interface InvoiceTemplateProps {
@@ -8,17 +8,19 @@ interface InvoiceTemplateProps {
 
 export default function InvoiceTemplate({ invoice, isPreview = false }: InvoiceTemplateProps) {
   // CSP is disabled globally, no need to add meta tags
+  const [logoBase64, setLogoBase64] = useState<string>('');
 
   // Robust logo system with multiple fallbacks (same as PDF template)
-  const getLogoAsBase64 = (): string => {
+  const getLogoAsBase64 = async (): Promise<string> => {
     try {
       // Method 1: Try PNG first (most reliable)
-      const pngBase64 = getPNGLogoBase64();
+      const pngBase64 = await getPNGLogoBase64();
       if (pngBase64) {
         return pngBase64;
       }
     } catch (error) {
       // PNG logo failed, trying SVG fallback
+      console.warn('PNG logo failed, trying SVG fallback:', error);
     }
 
     try {
@@ -29,6 +31,7 @@ export default function InvoiceTemplate({ invoice, isPreview = false }: InvoiceT
       }
     } catch (error) {
       // SVG logo failed, using text fallback
+      console.warn('SVG logo failed, using text fallback:', error);
     }
 
     // Method 3: Text-based fallback (guaranteed to work)
@@ -36,11 +39,18 @@ export default function InvoiceTemplate({ invoice, isPreview = false }: InvoiceT
   };
 
   // Method 1: PNG Logo (Primary - Most Reliable)
-  const getPNGLogoBase64 = (): string | null => {
+  const getPNGLogoBase64 = async (): Promise<string | null> => {
     try {
-      // This will be updated with actual PNG base64 data
-      return null; // Placeholder - will be updated by the script
+      // Fetch PNG logo dynamically from assets folder via Electron API
+      if (window.electronAPI && window.electronAPI.getLogoBase64) {
+        const pngBase64 = await window.electronAPI.getLogoBase64();
+        if (pngBase64) {
+          return pngBase64;
+        }
+      }
+      return null;
     } catch (error) {
+      console.error('Error loading PNG logo:', error);
       return null;
     }
   };
@@ -75,7 +85,13 @@ export default function InvoiceTemplate({ invoice, isPreview = false }: InvoiceT
     return 'data:image/svg+xml;base64,' + btoa(textSvg);
   };
 
-  const logoBase64 = getLogoAsBase64();
+  // Load logo asynchronously
+  useEffect(() => {
+    getLogoAsBase64().then(setLogoBase64).catch((error) => {
+      console.error('Error loading logo:', error);
+      setLogoBase64(getTextLogoBase64()); // Fallback to text logo
+    });
+  }, []);
 
   const templateStyles = `
     @page {

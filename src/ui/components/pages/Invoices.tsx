@@ -107,6 +107,16 @@ export default function InvoicesPage() {
 
   const handleDownloadInvoice = async (invoice: Invoice) => {
     try {
+      // Fetch logo base64 from assets folder
+      let logoBase64 = '';
+      try {
+        if (window.electronAPI && window.electronAPI.getLogoBase64) {
+          logoBase64 = await window.electronAPI.getLogoBase64();
+        }
+      } catch (error) {
+        console.warn('Failed to load logo, using fallback:', error);
+      }
+      
       // Create a new window with the invoice template
       const printWindow = window.open('', '_blank');
       if (printWindow) {
@@ -350,7 +360,7 @@ export default function InvoicesPage() {
             <body>
               <div class="invoice-template">
                 <div class="logo-section">
-                  <img src="/src/assets/letterpadIcon.png" alt="Company Logo" class="logo" />
+                  ${logoBase64 ? `<img src="${logoBase64}" alt="Company Logo" class="logo" />` : '<div class="logo">ESSAR TRAVELS</div>'}
                 </div>
 
                 <div class="separator-line"></div>
