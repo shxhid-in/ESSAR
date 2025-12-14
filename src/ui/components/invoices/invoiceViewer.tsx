@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Invoice } from '../../../electron/database';
 import { downloadInvoicePDF } from '../../utils/invoiceTemplate';
 
@@ -8,6 +8,23 @@ interface InvoiceViewerProps {
 }
 
 const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
+  const [logoBase64, setLogoBase64] = useState('');
+  const [signatureBase64, setSignatureBase64] = useState('');
+
+  useEffect(() => {
+    const loadAssets = async () => {
+      try {
+        const logo = await (window.electronAPI as any).getLogoBase64();
+        const signature = await (window.electronAPI as any).getSignatureBase64();
+        setLogoBase64(logo || '');
+        setSignatureBase64(signature || '');
+      } catch (error) {
+        console.error('Failed to load assets:', error);
+      }
+    };
+    loadAssets();
+  }, []);
+
   const handleDownloadPDF = async () => {
     try {
       await downloadInvoicePDF(invoice);
@@ -17,26 +34,23 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
     }
   };
 
+  const getPaymentStatusText = () => {
+    if (invoice.paymentStatus === 'paid') return 'Paid';
+    if (invoice.paymentStatus === 'pending') return 'Pending';
+    return 'Unpaid';
+  };
+
+  const getPaymentStatusClass = () => {
+    if (invoice.paymentStatus === 'paid') return 'payment-status-paid';
+    if (invoice.paymentStatus === 'pending') return 'payment-status-pending';
+    return 'payment-status-unpaid';
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content invoice-viewer" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header invoice-viewer-header">
-          <div className="invoice-header-content">
+      <div className="modal-content invoice-viewer-new" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header invoice-viewer-header-new">
           <h2 className="modal-title">Invoice {invoice.invoiceNumber}</h2>
-            <div className="invoice-meta-info">
-              <span className="invoice-date">
-                {new Date(invoice.date).toLocaleDateString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                })}
-              </span>
-              <span className="invoice-currency">{invoice.currency}</span>
-              {invoice.refNo && (
-                <span className="invoice-ref-no">Ref: {invoice.refNo}</span>
-              )}
-            </div>
-          </div>
           <button
             onClick={onClose}
             className="modal-close"
@@ -46,85 +60,192 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
           </button>
         </div>
         
-        <div className="modal-body invoice-viewer-body">
-          {/* Customer Section */}
-          <div className="invoice-section-card">
-            <h3 className="section-title">Bill To</h3>
-            <div className="customer-details">
-              <div className="customer-detail-item">
-                <span className="detail-label">Name</span>
-                <span className="detail-value">{invoice.customerName}</span>
-                  </div>
-              <div className="customer-detail-item">
-                <span className="detail-label">Address</span>
-                <span className="detail-value">{invoice.customerAddress}</span>
-              </div>
-              <div className="customer-detail-item">
-                <span className="detail-label">Phone</span>
-                <span className="detail-value">{invoice.phone}</span>
-              </div>
-              {invoice.pnr && (
-                <div className="customer-detail-item">
-                  <span className="detail-label">PNR</span>
-                  <span className="detail-value">{invoice.pnr}</span>
-                </div>
+        <div className="modal-body invoice-viewer-body-new">
+          <div className="invoice-container-new">
+            {/* Logo Section */}
+            <div className="logo-section-new">
+              {logoBase64 ? (
+                <img src={logoBase64} alt="ESSAR TRAVELS Logo" className="logo-new" />
+              ) : (
+                <h2 className="logo-text">ESSAR TRAVEL HUB</h2>
               )}
+            </div>
+            
+            <div className="separator-line-new"></div>
+            
+            {/* Header Section */}
+            <div className="header-section-new">
+              <div className="header-row-new">
+                <div className="customer-label-new">Customer details</div>
+                <div className="invoice-info-right-new">
+                  <span className="invoice-info-label-new">Invoice Details</span>
+                </div>
+              </div>
+              <div className="header-row-new">
+                <div className="customer-detail-row-new">
+                  <span className="customer-label-new">Name:</span> {invoice.customerName}
+                </div>
+                <div className="invoice-info-right-new">
+                  <span className="invoice-info-label-new">Invoice No:</span>
+                  <span className="invoice-number-value-new">{invoice.invoiceNumber}</span>
+                </div>
+              </div>
+              <div className="header-row-new">
+                <div className="customer-detail-row-new">
+                  <span className="customer-label-new">Phone No:</span> {invoice.phone}
+                </div>
+                <div className="invoice-info-right-new">
+                  <span className="invoice-info-label-new">Date:</span>
+                  <span className="invoice-date-value-new">
+                    {new Date(invoice.date).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+              <div className="header-row-new">
+                <div className="customer-detail-row-new">
+                  <span className="customer-label-new">Address:</span> {invoice.customerAddress}
+                </div>
+                <div className="invoice-info-right-new">
+                  {invoice.refNo && (
+                    <>
+                      <span className="invoice-info-label-new">Ref No:</span>
+                      <span className="invoice-ref-value-new">{invoice.refNo}</span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             
-          {/* Items Section */}
-          <div className="invoice-section-card">
-            <h3 className="section-title">Items</h3>
-            <div className="items-table-wrapper">
-              <table className="invoice-items-table">
-                  <thead>
-                    <tr>
-                      <th>Service</th>
-                      <th>Description</th>
-                    <th className="text-right">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoice.items.map((item, index) => (
-                      <tr key={index}>
-                      <td className="service-name">{item.serviceName}</td>
-                      <td className="service-description">{item.serviceDescription || '-'}</td>
-                      <td className="service-price text-right">
-                        {invoice.currency} {item.price.toFixed(2)}
-                      </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <div className="separator-line-new"></div>
             
-          {/* Totals Section */}
-          <div className="invoice-totals-section">
-              <div className="total-row">
-              <span className="total-label">Sub Total</span>
-              <span className="total-value">
-                  {invoice.currency} {invoice.subTotal.toFixed(2)}
+            {/* Services Table */}
+            <table className="services-table-new">
+              <thead>
+                <tr>
+                  <th>Sl. No</th>
+                  <th>Service</th>
+                  <th>Description</th>
+                  <th className="price-cell-new">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.items.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.serviceName}</td>
+                    <td>{item.serviceDescription || '-'}</td>
+                    <td className="price-cell-new">
+                      {item.price.toFixed(2)} {invoice.currency}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+            <div className="separator-line-new"></div>
+            
+            {/* Totals Section */}
+            <div className="totals-section-new">
+              <div className="total-row-new">
+                <span className="total-label-new">Subtotal:</span>
+                <span className="total-value-new">
+                  {invoice.subTotal.toFixed(2)} {invoice.currency}
                 </span>
               </div>
               {invoice.discount && invoice.discount > 0 && (
-                <div className="total-row">
-                <span className="total-label">Discount</span>
-                <span className="total-value discount-value">
-                    -{invoice.currency} {invoice.discount.toFixed(2)}
+                <div className="total-row-new">
+                  <span className="total-label-new">Discount:</span>
+                  <span className="total-value-new">
+                    -{invoice.discount.toFixed(2)} {invoice.currency}
                   </span>
                 </div>
               )}
-            <div className="total-row grand-total-row">
-              <span className="total-label">Grand Total</span>
-              <span className="total-value grand-total-value">
-                  {invoice.currency} {invoice.grandTotal.toFixed(2)}
+              <div className="total-row-new grand-total-row-new">
+                <span className="total-label-new">Grand Total:</span>
+                <span className="total-value-new">
+                  {invoice.grandTotal.toFixed(2)} {invoice.currency}
                 </span>
+              </div>
+              
+              {/* Payment Information */}
+              {(invoice.amountPaid !== undefined && invoice.amountPaid > 0) && (
+                <>
+                  <div className="total-row-new">
+                    <span className="total-label-new">Amount Paid:</span>
+                    <span className="total-value-new">
+                      {invoice.amountPaid.toFixed(2)} {invoice.currency}
+                    </span>
+                  </div>
+                  <div className="total-row-new">
+                    <span className="total-label-new">Remaining Balance:</span>
+                    <span className={`total-value-new ${invoice.remainingBalance && invoice.remainingBalance > 0 ? 'balance-remaining' : 'balance-paid'}`}>
+                      {(invoice.remainingBalance || 0).toFixed(2)} {invoice.currency}
+                    </span>
+                  </div>
+                  <div className="total-row-new">
+                    <span className="total-label-new">Payment Status:</span>
+                    <span className={`payment-status-badge-new ${getPaymentStatusClass()}`}>
+                      {getPaymentStatusText()}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+            
+            <div className="separator-line-new"></div>
+            
+            {/* Contact Section */}
+            <div className="contact-section-new">
+              <div className="contact-title-new">Contact Details</div>
+              <div className="contact-info-new">
+                <div>A. Samsudheen</div>
+                <div>+91 9043938600</div>
+                <div>essartravelhub@gmail.com</div>
+              </div>
+            </div>
+            
+            {/* Bottom Section */}
+            <div className="bottom-section-new">
+              <div className="separator-line-new"></div>
+              <div className="thanks-message-new">
+                THANKS FOR DOING BUSINESS WITH US
+              </div>
+              <div className="separator-line-new"></div>
+              
+              <div className="signatory-footer-new">
+                <div></div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className="signatory-right-new">For ESSAR Travel Hub</div>
+                  {signatureBase64 && (
+                    <img 
+                      src={signatureBase64} 
+                      alt="Authorised Signature" 
+                      className="signature-image-new" 
+                    />
+                  )}
+                </div>
+              </div>
+              
+              <div className="signature-row-new">
+                <div className="signature-label-new">Customer Signature</div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className="signature-label-new">Authorised Signature</div>
+                </div>
+              </div>
+              
+              <div className="separator-line-new"></div>
+              <div className="address-footer-new">
+                Essar Style Walk and Travel Hub, 1202, B.B. Street, Town Hall, Coimbatore, Tamil Nadu. India. Pin-641001.
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="modal-footer invoice-viewer-footer">
+        <div className="modal-footer invoice-viewer-footer-new">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -148,4 +269,3 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
 };
 
 export default InvoiceViewer;
-

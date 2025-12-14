@@ -202,6 +202,17 @@ type ElectronAPI = {
   
   printInvoice: (invoice: any) => Promise<void>;
   generatePDF: (htmlContent: string, filename: string) => Promise<{ success: boolean; filePath?: string; message?: string; error?: string }>;
+  getSignatureBase64: () => Promise<string>;
+  getLogoBase64: () => Promise<string>;
+  
+  // Payment operations
+  addOrUpdateInvoicePayment: (invoiceId: number, paymentData: {
+    amountPaid: number;
+    paymentDate: string;
+    paymentMethod: string;
+    notes?: string;
+  }) => Promise<boolean>;
+  getInvoicePayment: (invoiceId: number) => Promise<any>;
   
   // Analytics API
   getMonthlyRevenue: (year: string) => Promise<any[]>;

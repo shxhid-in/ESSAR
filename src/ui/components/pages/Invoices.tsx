@@ -7,6 +7,7 @@ import InvoiceViewer from '../invoices/invoiceViewer';
 import InvoiceCreator from '../invoices/invoiceCreator';
 import InvoiceEditor from '../invoices/invoiceEditor';
 import DeleteConfirmation from '../invoices/deleteConfirmation';
+import PaymentModal from '../invoices/PaymentModal';
 import { downloadInvoicePDF } from '../../utils/invoiceTemplate';
 import type { Invoice } from '../../../electron/database';
 
@@ -31,6 +32,7 @@ export default function InvoicesPage() {
   const [showInvoiceCreator, setShowInvoiceCreator] = useState(false);
   const [showInvoiceEditor, setShowInvoiceEditor] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -93,6 +95,38 @@ export default function InvoicesPage() {
   const handleDeleteInvoice = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setShowDeleteConfirmation(true);
+  };
+
+  const handleTrackPayment = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setShowPaymentModal(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+    setSelectedInvoice(null);
+  };
+
+  const handleSavePayment = async (paymentData: {
+    amountPaid: number;
+    paymentDate: string;
+    paymentMethod: string;
+    notes?: string;
+  }) => {
+    if (!selectedInvoice) return;
+    
+    try {
+      await (window.electronAPI as any).addOrUpdateInvoicePayment(
+        parseInt(selectedInvoice.id),
+        paymentData
+      );
+      setShowPaymentModal(false);
+      setSelectedInvoice(null);
+      refetch(); // Refresh the invoice list
+    } catch (error) {
+      console.error('Failed to save payment:', error);
+      throw error;
+    }
   };
 
   const handleDownloadInvoiceNew = async (invoice: Invoice) => {
@@ -616,6 +650,7 @@ export default function InvoicesPage() {
         onEditInvoice={handleEditInvoice}
         onDeleteInvoice={handleDeleteInvoice}
         onDownloadInvoice={handleDownloadInvoiceNew}
+        onTrackPayment={handleTrackPayment}
         onCreateNew={handleCreateNew}
         isLoading={isLoading}
       />
@@ -649,6 +684,15 @@ export default function InvoicesPage() {
           invoice={selectedInvoice}
           onConfirm={handleConfirmDelete}
           onCancel={handleCloseDeleteConfirmation}
+          isLoading={isCreating}
+        />
+      )}
+      
+      {showPaymentModal && selectedInvoice && (
+        <PaymentModal
+          invoice={selectedInvoice}
+          onClose={handleClosePaymentModal}
+          onSave={handleSavePayment}
           isLoading={isCreating}
         />
       )}

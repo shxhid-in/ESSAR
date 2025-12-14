@@ -13,6 +13,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getSignatureBase64: () => ipcRenderer.invoke('get-signature-base64'),
   getLogoBase64: () => ipcRenderer.invoke('get-logo-base64'),
   
+  // Payment operations
+  addOrUpdateInvoicePayment: (invoiceId: number, paymentData: any) => ipcRenderer.invoke('add-or-update-invoice-payment', { invoiceId, paymentData }),
+  getInvoicePayment: (invoiceId: number) => ipcRenderer.invoke('get-invoice-payment', { invoiceId }),
+  
   // Customer operations
   getCustomers: () => ipcRenderer.invoke('get-customers'),
   searchCustomers: (query: string) => ipcRenderer.invoke('search-customers', { query }),

@@ -21,6 +21,7 @@ interface InvoiceDraft {
   }>;
   discount?: number;
   refNo?: string;
+  isFullyPaid?: boolean;
   subTotal: number;
   grandTotal: number;
 }
@@ -38,6 +39,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
     items: [{ serviceName: '', serviceDescription: '', purchasePrice: 0, price: 0 }],
     discount: 0,
     refNo: '',
+    isFullyPaid: false,
     subTotal: 0,
     grandTotal: 0
   });
@@ -165,6 +167,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
 
     const submitData = {
       ...invoiceData,
+      isFullyPaid: invoiceData.isFullyPaid || false,
       items: invoiceData.items.map(item => ({
         serviceName: item.serviceName,
         serviceDescription: item.serviceDescription,
@@ -188,6 +191,7 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
         items: [{ serviceName: '', serviceDescription: '', purchasePrice: 0, price: 0 }],
       discount: 0,
         refNo: '',
+      isFullyPaid: false,
       subTotal: 0,
       grandTotal: 0
     });
@@ -328,6 +332,23 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                       placeholder="Enter reference number"
                     />
                   </div>
+                </div>
+                
+                <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
+                    <input
+                      type="checkbox"
+                      checked={invoiceData.isFullyPaid || false}
+                      onChange={(e) => setInvoiceData(prev => ({ ...prev, isFullyPaid: e.target.checked }))}
+                      style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '14px', fontWeight: '500' }}>
+                      Mark as Fully Paid
+                    </span>
+                  </label>
+                  <p style={{ marginTop: '4px', fontSize: '12px', color: '#6b7280', marginLeft: '26px' }}>
+                    If checked, the invoice will be marked as fully paid upon creation
+                  </p>
                 </div>
               </div>
               

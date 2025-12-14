@@ -3,7 +3,7 @@ import { createMenu } from './menu.js';
 import { createTray } from './tray.js';
 import { ipcMainHandle, ipcMainOn, isDev } from './util.js';
 import { getPreloadPath, getUIPath, getAssetPath } from './pathResolver.js';
-import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency } from './database.js';
+import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency, addOrUpdateInvoicePayment, getInvoicePaymentData } from './database.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -134,6 +134,16 @@ ipcMainHandle('get-business-kpis', async () => {
   ipcMainHandle('delete-invoice', async (payload) => {
     return deleteInvoice(payload.id);
   });
+
+// Payment IPC Handlers
+ipcMainHandle('add-or-update-invoice-payment', async (payload) => {
+  return addOrUpdateInvoicePayment(payload.invoiceId, payload.paymentData);
+});
+
+ipcMainHandle('get-invoice-payment', async (payload) => {
+  return getInvoicePaymentData(payload.invoiceId);
+});
+
 ipcMainHandle('get-signature-base64', async () => {
   return getSignatureAsBase64();
 });

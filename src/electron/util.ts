@@ -83,6 +83,22 @@ interface EventPayloadMapping {
     return: string;
   };
 
+  'add-or-update-invoice-payment': {
+    invoiceId: number;
+    paymentData: {
+      amountPaid: number;
+      paymentDate: string;
+      paymentMethod: string;
+      notes?: string;
+    };
+    return: boolean;
+  };
+
+  'get-invoice-payment': {
+    invoiceId: number;
+    return: any;
+  };
+
   'get-daily-sales': {
     date: string;
     return: Array<{

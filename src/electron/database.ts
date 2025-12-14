@@ -62,6 +62,16 @@ export type Payment = {
   payment_method?: string;
 };
 
+export type InvoicePayment = {
+  id?: number;
+  invoice_id: number;
+  amount_paid: number;
+  payment_date: string;
+  payment_method: string;
+  notes?: string;
+  created_at?: string;
+};
+
 export type Invoice = {
   id: string;
   invoiceNumber: string;
@@ -82,6 +92,9 @@ export type Invoice = {
   subTotal: number;
   discount: number;
   grandTotal: number;
+  paymentStatus?: 'unpaid' | 'pending' | 'paid';
+  amountPaid?: number;
+  remainingBalance?: number;
 };
 
 // ---------- Table Setup ---------- //
@@ -156,6 +169,17 @@ function initializeTables() {
       id INTEGER PRIMARY KEY,
       current_sequence INTEGER DEFAULT 0,
       last_reset_date TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS invoice_payments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      invoice_id INTEGER NOT NULL,
+      amount_paid REAL NOT NULL DEFAULT 0,
+      payment_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      payment_method TEXT DEFAULT 'Cash',
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
     );
   `);
 };
@@ -967,6 +991,7 @@ export function createInvoice(invoiceData: {
   }>;
   discount?: number;
   refNo?: string;
+  isFullyPaid?: boolean;
 }): { success: boolean; invoiceId?: number; error?: string } {
   try {
     // Validate invoice data
@@ -1028,6 +1053,16 @@ export function createInvoice(invoiceData: {
     itemsWithDetails.forEach((item: any) => {
       insertItem.run(invoiceId, item.serviceId, item.serviceName, item.serviceDescription, item.purchasePrice, item.price);
     });
+    
+    // Create payment record if fully paid
+    if (invoiceData.isFullyPaid) {
+      addOrUpdateInvoicePayment(invoiceId, {
+        amountPaid: grandTotal,
+        paymentDate: invoiceDate,
+        paymentMethod: 'Cash',
+        notes: 'Payment received at invoice creation'
+      });
+    }
     
     return { success: true, invoiceId };
   } catch (error) {
@@ -1112,6 +1147,33 @@ export function updateInvoice(invoiceId: number, invoiceData: {
   }
 }
 
+// Helper function to calculate payment status
+function calculatePaymentStatus(amountPaid: number, grandTotal: number): 'unpaid' | 'pending' | 'paid' {
+  if (amountPaid === 0) return 'unpaid';
+  if (amountPaid >= grandTotal) return 'paid';
+  return 'pending';
+}
+
+// Helper function to get payment for invoice
+function getInvoicePayment(invoiceId: number): { amountPaid: number; paymentDate: string; paymentMethod: string; notes?: string } | null {
+  const payment = db.prepare(`
+    SELECT amount_paid, payment_date, payment_method, notes 
+    FROM invoice_payments 
+    WHERE invoice_id = ? 
+    ORDER BY created_at DESC 
+    LIMIT 1
+  `).get(invoiceId) as any;
+  
+  if (!payment) return null;
+  
+  return {
+    amountPaid: payment.amount_paid || 0,
+    paymentDate: payment.payment_date,
+    paymentMethod: payment.payment_method || 'Cash',
+    notes: payment.notes
+  };
+}
+
 export function getAllInvoices(): Invoice[] {
   const invoices = db.prepare(`
     SELECT * FROM invoices ORDER BY created_at DESC
@@ -1124,6 +1186,12 @@ export function getAllInvoices(): Invoice[] {
     
     // Decrypt invoice data
     const decryptedInvoice = decryptInvoiceData(invoice);
+    
+    // Get payment info
+    const payment = getInvoicePayment(invoice.id);
+    const amountPaid = payment?.amountPaid || 0;
+    const remainingBalance = invoice.grand_total - amountPaid;
+    const paymentStatus = calculatePaymentStatus(amountPaid, invoice.grand_total);
     
     return {
       id: invoice.id.toString(),
@@ -1144,7 +1212,10 @@ export function getAllInvoices(): Invoice[] {
       })),
       subTotal: invoice.sub_total,
       discount: invoice.discount,
-      grandTotal: invoice.grand_total
+      grandTotal: invoice.grand_total,
+      paymentStatus,
+      amountPaid,
+      remainingBalance
     };
   });
 }
@@ -1161,6 +1232,12 @@ export function getInvoicesByCustomer(customerName: string, customerPhone: strin
       SELECT * FROM invoice_items WHERE invoice_id = ?
     `).all(invoice.id) as any[];
     
+    // Get payment info
+    const payment = getInvoicePayment(invoice.id);
+    const amountPaid = payment?.amountPaid || 0;
+    const remainingBalance = invoice.grand_total - amountPaid;
+    const paymentStatus = calculatePaymentStatus(amountPaid, invoice.grand_total);
+    
     return {
       id: invoice.id.toString(),
       invoiceNumber: invoice.invoice_number,
@@ -1168,6 +1245,7 @@ export function getInvoicesByCustomer(customerName: string, customerPhone: strin
       customerAddress: invoice.customer_address,
       phone: invoice.customer_phone,
       pnr: invoice.pnr,
+      refNo: invoice.ref_no,
       currency: invoice.currency,
       date: invoice.invoice_date,
       items: items.map(item => ({
@@ -1179,7 +1257,10 @@ export function getInvoicesByCustomer(customerName: string, customerPhone: strin
       })),
       subTotal: invoice.sub_total,
       discount: invoice.discount,
-      grandTotal: invoice.grand_total
+      grandTotal: invoice.grand_total,
+      paymentStatus,
+      amountPaid,
+      remainingBalance
     };
   });
 }
@@ -1192,6 +1273,12 @@ export function getInvoiceById(id: number): Invoice | undefined {
   
   // Decrypt invoice data
   const decryptedInvoice = decryptInvoiceData(invoice);
+  
+  // Get payment info
+  const payment = getInvoicePayment(id);
+  const amountPaid = payment?.amountPaid || 0;
+  const remainingBalance = invoice.grand_total - amountPaid;
+  const paymentStatus = calculatePaymentStatus(amountPaid, invoice.grand_total);
   
   return {
     id: invoice.id.toString(),
@@ -1212,7 +1299,10 @@ export function getInvoiceById(id: number): Invoice | undefined {
     })),
     subTotal: invoice.sub_total,
     discount: invoice.discount,
-    grandTotal: invoice.grand_total
+    grandTotal: invoice.grand_total,
+    paymentStatus,
+    amountPaid,
+    remainingBalance
   };
 }
 
@@ -1224,6 +1314,79 @@ export function deleteInvoice(id: number): boolean {
     console.error('Invoice deletion failed:', error);
     return false;
   }
+}
+
+// ---------- Invoice Payment Functions ---------- //
+
+export function addOrUpdateInvoicePayment(invoiceId: number, paymentData: {
+  amountPaid: number;
+  paymentDate: string;
+  paymentMethod: string;
+  notes?: string;
+}): boolean {
+  try {
+    // Validate amount - cap at grand total
+    const invoice = db.prepare("SELECT grand_total FROM invoices WHERE id = ?").get(invoiceId) as any;
+    if (!invoice) {
+      throw new Error('Invoice not found');
+    }
+    
+    // Cap amount at grand total
+    const amountPaid = Math.min(paymentData.amountPaid, invoice.grand_total);
+    
+    // Check if payment exists
+    const existingPayment = db.prepare("SELECT id FROM invoice_payments WHERE invoice_id = ?").get(invoiceId) as any;
+    
+    if (existingPayment) {
+      // Update existing payment
+      db.prepare(`
+        UPDATE invoice_payments 
+        SET amount_paid = ?, payment_date = ?, payment_method = ?, notes = ?
+        WHERE invoice_id = ?
+      `).run(
+        amountPaid,
+        paymentData.paymentDate,
+        paymentData.paymentMethod,
+        paymentData.notes || null,
+        invoiceId
+      );
+    } else {
+      // Insert new payment
+      db.prepare(`
+        INSERT INTO invoice_payments (invoice_id, amount_paid, payment_date, payment_method, notes)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(
+        invoiceId,
+        amountPaid,
+        paymentData.paymentDate,
+        paymentData.paymentMethod,
+        paymentData.notes || null
+      );
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Payment save failed:', error);
+    throw error;
+  }
+}
+
+export function getInvoicePaymentData(invoiceId: number): InvoicePayment | null {
+  const payment = db.prepare(`
+    SELECT * FROM invoice_payments WHERE invoice_id = ? ORDER BY created_at DESC LIMIT 1
+  `).get(invoiceId) as any;
+  
+  if (!payment) return null;
+  
+  return {
+    id: payment.id,
+    invoice_id: payment.invoice_id,
+    amount_paid: payment.amount_paid,
+    payment_date: payment.payment_date,
+    payment_method: payment.payment_method,
+    notes: payment.notes,
+    created_at: payment.created_at
+  };
 }
 
 // ---------- Service Functions ---------- //
