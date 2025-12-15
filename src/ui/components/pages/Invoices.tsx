@@ -23,8 +23,11 @@ type InvoiceDraft = {
   customerAddress: string;
   phone: string;
   currency: string;
+  invoiceDate?: string;
   items: InvoiceItem[];
   discount?: number;
+  refNo?: string;
+  isFullyPaid?: boolean;
 };
 
 export default function InvoicesPage() {
@@ -580,6 +583,7 @@ export default function InvoicesPage() {
       customerAddress: invoiceData.customerAddress,
       phone: invoiceData.phone,
       currency: invoiceData.currency,
+      invoiceDate: invoiceData.invoiceDate, // Include the selected invoice date
       items: invoiceData.items.map((item: any) => ({
         serviceName: item.serviceName,
         serviceDescription: item.serviceDescription,
@@ -587,7 +591,8 @@ export default function InvoicesPage() {
         price: item.price
       })),
       discount: invoiceData.discount || 0,
-      refNo: invoiceData.refNo || ''
+      refNo: invoiceData.refNo || '',
+      isFullyPaid: invoiceData.isFullyPaid || false // Include the fully paid flag
     };
     
     // Use mutateAsync to get a promise we can await
@@ -653,21 +658,21 @@ export default function InvoicesPage() {
       {/* Search Bar & New Invoice */}
       <div className="search-section">
         <div className="search-actions">
-          <div className="search-container">
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search by customer name or invoice number..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="search-results-info">
-              {searchQuery && (
-                <span className="search-count">
-                  {filteredInvoices.length} of {allInvoices.length} invoices
-                </span>
-              )}
-            </div>
+        <div className="search-container">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by customer name or invoice number..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="search-results-info">
+            {searchQuery && (
+              <span className="search-count">
+                {filteredInvoices.length} of {allInvoices.length} invoices
+              </span>
+            )}
+          </div>
           </div>
           <button
             onClick={handleCreateNew}

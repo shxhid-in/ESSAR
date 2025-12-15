@@ -394,8 +394,9 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
           <div class="contact-section">
             <div class="contact-title">Contact Details</div>
             <div class="contact-info">
-              <div>A. Samsudheen</div>
-              <div>+91 9043938600</div>
+              <div>Samsudheen A</div>
+              <div>+91 9043738600</div>
+              <div>+971 559915534</div>
               <div>essartravelhub@gmail.com</div>
             </div>
           </div>

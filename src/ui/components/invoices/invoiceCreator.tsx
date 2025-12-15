@@ -13,6 +13,7 @@ interface InvoiceDraft {
   customerAddress: string;
   phone: string;
   currency: string;
+  invoiceDate?: string;
   items: Array<{
     serviceName: string;
     serviceDescription: string;
@@ -31,11 +32,21 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
   onSave, 
   isLoading 
 }) => {
+  // Get today's date in YYYY-MM-DD format for the date input
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const [invoiceData, setInvoiceData] = useState<InvoiceDraft>({
     customerName: '',
     customerAddress: '',
     phone: '',
-    currency: 'USD',
+    currency: 'INR',
+    invoiceDate: getTodayDate(),
     items: [{ serviceName: '', serviceDescription: '', purchasePrice: 0, price: 0 }],
     discount: 0,
     refNo: '',
@@ -187,7 +198,8 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
       customerName: '',
       customerAddress: '',
       phone: '',
-      currency: 'USD',
+      currency: 'INR',
+      invoiceDate: getTodayDate(),
         items: [{ serviceName: '', serviceDescription: '', purchasePrice: 0, price: 0 }],
       discount: 0,
         refNo: '',
@@ -290,7 +302,18 @@ const InvoiceCreator: React.FC<InvoiceCreatorProps> = ({
                   </div>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px' }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Invoice Date</label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      value={invoiceData.invoiceDate || getTodayDate()}
+                      onChange={(e) => setInvoiceData(prev => ({ ...prev, invoiceDate: e.target.value }))}
+                      max={getTodayDate()}
+                    />
+                  </div>
+                  
                   <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">Currency</label>
                   <select

@@ -202,8 +202,9 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
             <div className="contact-section-new">
               <div className="contact-title-new">Contact Details</div>
               <div className="contact-info-new">
-                <div>A. Samsudheen</div>
-                <div>+91 9043938600</div>
+                <div>Samsudheen A</div>
+                <div>+91 9043738600</div>
+                <div>+971 559915534</div>
                 <div>essartravelhub@gmail.com</div>
               </div>
             </div>

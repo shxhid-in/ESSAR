@@ -974,10 +974,18 @@ export const settingsDB = {
 
 // ---------- Invoice Functions ---------- //
 
-function generateInvoiceNumber(): string {
-  const today = new Date();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const yyyy = String(today.getFullYear());
+function generateInvoiceNumber(invoiceDate?: string): string {
+  // Use provided invoice date or default to today
+  let dateToUse: Date;
+  if (invoiceDate) {
+    // Parse the invoice date (ISO string format)
+    dateToUse = new Date(invoiceDate);
+  } else {
+    dateToUse = new Date();
+  }
+  
+  const mm = String(dateToUse.getMonth() + 1).padStart(2, '0');
+  const yyyy = String(dateToUse.getFullYear());
   // YYYYMMNNNNN format (4 year + 2 month + 5 serial = 11 digits total)
   const dateStr = `${yyyy}${mm}`;
   
@@ -1003,6 +1011,7 @@ export function createInvoice(invoiceData: {
   customerAddress: string;
   phone: string;
   currency: string;
+  invoiceDate?: string;
   items: Array<{
     serviceName: string;
     serviceDescription: string;
@@ -1025,8 +1034,25 @@ export function createInvoice(invoiceData: {
     
     const sanitizedInvoice = validation.sanitizedData!;
     const encryptedInvoice = encryptInvoiceData(sanitizedInvoice);
-    const invoiceNumber = generateInvoiceNumber();
-    const invoiceDate = new Date().toISOString();
+    
+    // Use provided invoiceDate or default to today's date
+    // Check both original invoiceData and sanitizedInvoice to ensure we get the date
+    // If invoiceDate is provided in YYYY-MM-DD format, convert to ISO string
+    // Otherwise, use current date
+    let invoiceDate: string;
+    const dateToUse = invoiceData.invoiceDate || sanitizedInvoice.invoiceDate;
+    if (dateToUse && typeof dateToUse === 'string' && dateToUse.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // Convert YYYY-MM-DD to ISO string (set to midnight UTC)
+      // This ensures the date is preserved correctly regardless of timezone
+      const [year, month, day] = dateToUse.split('-').map(Number);
+      const date = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+      invoiceDate = date.toISOString();
+    } else {
+      invoiceDate = new Date().toISOString();
+    }
+    
+    // Generate invoice number using the invoice date
+    const invoiceNumber = generateInvoiceNumber(invoiceDate);
     
     // Calculate totals
     let subTotal = 0;
@@ -1075,13 +1101,24 @@ export function createInvoice(invoiceData: {
     });
     
     // Create payment record if fully paid
-    if (invoiceData.isFullyPaid) {
-      addOrUpdateInvoicePayment(invoiceId, {
-        amountPaid: grandTotal,
-        paymentDate: invoiceDate,
-        paymentMethod: 'Cash',
-        notes: 'Payment received at invoice creation'
-      });
+    if (invoiceData.isFullyPaid && grandTotal > 0) {
+      try {
+        const paymentCreated = addOrUpdateInvoicePayment(invoiceId, {
+          amountPaid: grandTotal, // Use exact grandTotal value
+          paymentDate: invoiceDate,
+          paymentMethod: 'Cash',
+          notes: 'Payment received at invoice creation'
+        });
+        
+        if (!paymentCreated) {
+          console.error('Failed to create payment record for fully paid invoice', invoiceId);
+          // Don't fail invoice creation if payment record creation fails
+          // The payment can be added manually later
+        }
+      } catch (paymentError) {
+        console.error('Error creating payment record:', paymentError);
+        // Don't fail invoice creation if payment record creation fails
+      }
     }
     
     return { success: true, invoiceId };
@@ -1169,8 +1206,10 @@ export function updateInvoice(invoiceId: number, invoiceData: {
 
 // Helper function to calculate payment status
 function calculatePaymentStatus(amountPaid: number, grandTotal: number): 'unpaid' | 'pending' | 'paid' {
-  if (amountPaid === 0) return 'unpaid';
-  if (amountPaid >= grandTotal) return 'paid';
+  // Use a small epsilon for floating point comparison
+  const epsilon = 0.01;
+  if (Math.abs(amountPaid) < epsilon) return 'unpaid';
+  if (amountPaid >= grandTotal - epsilon) return 'paid';
   return 'pending';
 }
 
