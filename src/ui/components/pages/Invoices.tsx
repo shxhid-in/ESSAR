@@ -35,6 +35,7 @@ export default function InvoicesPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState<'newest' | 'oldest' | 'paid' | 'pending' | 'unpaid'>('newest');
   
   // Fetch invoices
   const { data: allInvoices = [], refetch, isLoading } = useQuery<Invoice[]>(
@@ -56,6 +57,31 @@ export default function InvoicesPage() {
     return customerName.includes(query) || 
            invoiceNumber.includes(query) || 
            (refNo && refNo.includes(query));
+  });
+  
+  // Sort invoices based on selected option
+  const sortedInvoices = [...filteredInvoices].sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    const statusOrder = {
+      paid: 0,
+      pending: 1,
+      unpaid: 2
+    } as const;
+
+    switch (sortOption) {
+      case 'oldest':
+        return dateA - dateB;
+      case 'paid':
+        return (statusOrder[a.paymentStatus || 'unpaid'] - statusOrder[b.paymentStatus || 'unpaid']) || (dateB - dateA);
+      case 'pending':
+        return ((a.paymentStatus === 'pending' ? 0 : 1) - (b.paymentStatus === 'pending' ? 0 : 1)) || (dateB - dateA);
+      case 'unpaid':
+        return ((a.paymentStatus === 'unpaid' ? 0 : 1) - (b.paymentStatus === 'unpaid' ? 0 : 1)) || (dateB - dateA);
+      case 'newest':
+      default:
+        return dateB - dateA;
+    }
   });
   
   // Create invoice mutation
@@ -624,28 +650,40 @@ export default function InvoicesPage() {
         subtitle="Create and manage customer invoices" 
       />
       
-      {/* Search Bar */}
+      {/* Search Bar & New Invoice */}
       <div className="search-section">
-        <div className="search-container">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search by customer name or invoice number..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="search-results-info">
-            {searchQuery && (
-              <span className="search-count">
-                {filteredInvoices.length} of {allInvoices.length} invoices
-              </span>
-            )}
+        <div className="search-actions">
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search by customer name or invoice number..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="search-results-info">
+              {searchQuery && (
+                <span className="search-count">
+                  {filteredInvoices.length} of {allInvoices.length} invoices
+                </span>
+              )}
+            </div>
           </div>
+          <button
+            onClick={handleCreateNew}
+            className="btn btn-primary btn-modern"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Invoice
+          </button>
         </div>
       </div>
       
       <InvoiceList
-        invoices={filteredInvoices}
+        invoices={sortedInvoices}
         onViewInvoice={handleViewInvoice}
         onEditInvoice={handleEditInvoice}
         onDeleteInvoice={handleDeleteInvoice}
@@ -653,6 +691,8 @@ export default function InvoicesPage() {
         onTrackPayment={handleTrackPayment}
         onCreateNew={handleCreateNew}
         isLoading={isLoading}
+        sortOption={sortOption}
+        onChangeSort={setSortOption}
       />
       
       {showInvoiceViewer && selectedInvoice && (

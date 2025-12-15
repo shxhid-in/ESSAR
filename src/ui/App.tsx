@@ -4,6 +4,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { QueryProvider } from '../providers/QueryProviders';
 import InvoicesPage from './components/pages/Invoices';
 import CustomersPage from './components/pages/Customers';
+import IncentivesPage from './components/pages/Incentives';
 import ReportsPage from './components/pages/Reports';
 import SettingsPage from './components/pages/Settings';
 import './App.css';
@@ -51,6 +52,7 @@ function AppContent() {
     <main className="content-area">
       {activeTab === 'invoices' && <InvoicesPage />}
       {activeTab === 'customers' && <CustomersPage />}
+      {activeTab === 'incentives' && <IncentivesPage />}
       {activeTab === 'reports' && <ReportsPage />}
       {activeTab === 'settings' && <SettingsPage />}
     </main>

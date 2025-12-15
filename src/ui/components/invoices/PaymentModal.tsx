@@ -145,79 +145,91 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           )}
 
           <form onSubmit={handleSubmit} className="payment-form">
-            <div className="form-group">
-              <label className="form-label">Amount Paid *</label>
-              <div className="amount-input-group">
+            <div className="payment-form-row">
+              <div className="form-group">
+                <label className="form-label">Payment Date *</label>
                 <input
-                  type="number"
+                  type="date"
                   className="form-input"
-                  min="0"
-                  max={invoice.grandTotal}
-                  step="0.01"
-                  value={amountPaid}
+                  value={paymentDate}
+                  max={new Date().toISOString().split('T')[0]}
                   onChange={(e) => {
-                    const value = parseFloat(e.target.value) || 0;
-                    setAmountPaid(Math.min(value, invoice.grandTotal));
+                    const selectedDate = e.target.value;
+                    const today = new Date().toISOString().split('T')[0];
+                    if (selectedDate <= today) {
+                      setPaymentDate(selectedDate);
+                    }
                   }}
-                  placeholder="0.00"
                   required
                 />
-                <span className="currency-label">{invoice.currency}</span>
               </div>
-              <div className="quick-actions">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  onClick={handleMarkFullPayment}
+
+              <div className="form-group">
+                <label className="form-label">Payment Method *</label>
+                <select
+                  className="form-select"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  required
                 >
-                  Mark as Full Payment
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  onClick={handleClearPayment}
-                >
-                  Clear Payment
-                </button>
+                  {paymentMethods.map(method => (
+                    <option key={method} value={method}>{method}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Payment Date *</label>
-              <input
-                type="date"
-                className="form-input"
-                value={paymentDate}
-                onChange={(e) => setPaymentDate(e.target.value)}
-                required
-              />
+            <div className="payment-form-row">
+              <div className="form-group">
+                <label className="form-label">Amount Paid *</label>
+                <div className="amount-input-group">
+                  <input
+                    type="number"
+                    className="form-input"
+                    min="0"
+                    max={invoice.grandTotal}
+                    step="0.01"
+                    value={amountPaid}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0;
+                      setAmountPaid(Math.min(value, invoice.grandTotal));
+                    }}
+                    placeholder="0.00"
+                    required
+                  />
+                  <span className="currency-label">{invoice.currency}</span>
+                </div>
+              </div>
+
+              <div className="form-group payment-form-actions">
+                <label className="form-label">&nbsp;</label>
+                <div className="quick-actions">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-secondary"
+                    onClick={handleMarkFullPayment}
+                  >
+                    Mark as Full Payment
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Payment Method *</label>
-              <select
-                className="form-select"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                required
-              >
-                {paymentMethods.map(method => (
-                  <option key={method} value={method}>{method}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group notes-with-actions">
-              <label className="form-label">Notes (Optional)</label>
-              <div className="notes-actions-wrapper">
+            <div className="payment-form-row payment-notes-row">
+              <div className="form-group form-group-notes">
+                <label className="form-label">Notes (Optional)</label>
                 <textarea
                   className="form-textarea"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add any additional notes about this payment..."
-                  rows={3}
+                  rows={2}
                 />
-                <div className="modal-footer-inline">
+              </div>
+
+              <div className="form-group payment-form-actions">
+                <label className="form-label">&nbsp;</label>
+                <div className="payment-form-buttons">
                   <button
                     type="button"
                     onClick={onClose}
@@ -227,14 +239,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     Cancel
                   </button>
                   <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const form = e.currentTarget.closest('.modal-content')?.querySelector('form');
-                      if (form) {
-                        form.requestSubmit();
-                      }
-                    }}
+                    type="submit"
                     className="btn btn-primary"
                     disabled={isLoading}
                   >

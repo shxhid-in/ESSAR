@@ -29,6 +29,14 @@ export default function RevenueAnalytics() {
     }
   );
 
+  // Get all invoices for payment tracking (reuse invoices API)
+  const { data: allInvoices, isLoading: invoicesLoading } = useQuery(
+    ['all-invoices-revenue'],
+    async () => {
+      return await (window.electronAPI as any).getInvoices();
+    }
+  );
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -151,6 +159,44 @@ export default function RevenueAnalytics() {
               );
             })}
           </div>
+        )}
+      </div>
+
+      {/* Payment Collection */}
+      <div className="card">
+        <h3>Payment Collection</h3>
+        {invoicesLoading ? (
+          <div className="loading">Loading...</div>
+        ) : (
+          (() => {
+            const invoices = allInvoices || [];
+            const totalBilled = invoices.reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+            const totalCollected = invoices.reduce((sum, inv) => sum + (inv.amountPaid || 0), 0);
+            const totalOutstanding = invoices.reduce((sum, inv) => sum + (inv.remainingBalance || 0), 0);
+            const collectionRate = totalBilled > 0 ? (totalCollected / totalBilled) * 100 : 0;
+
+            return (
+              <div className="payment-collection-overview">
+                <div className="revenue-stats">
+                  <div className="revenue-item">
+                    <div className="year">Total Billed</div>
+                    <div className="amount">{formatCurrency(totalBilled)}</div>
+                    <div className="invoices">All invoices</div>
+                  </div>
+                  <div className="revenue-item">
+                    <div className="year">Collected</div>
+                    <div className="amount" style={{ color: '#10b981' }}>{formatCurrency(totalCollected)}</div>
+                    <div className="invoices">{collectionRate.toFixed(1)}% collection rate</div>
+                  </div>
+                  <div className="revenue-item">
+                    <div className="year">Outstanding</div>
+                    <div className="amount" style={{ color: '#ef4444' }}>{formatCurrency(totalOutstanding)}</div>
+                    <div className="invoices">Pending collection</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()
         )}
       </div>
 

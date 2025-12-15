@@ -72,6 +72,16 @@ export type InvoicePayment = {
   created_at?: string;
 };
 
+export type Incentive = {
+  id?: number;
+  date: string;
+  amount: number;
+  provider?: string;
+  description?: string;
+  category?: string;
+  created_at?: string;
+};
+
 export type Invoice = {
   id: string;
   invoiceNumber: string;
@@ -180,6 +190,16 @@ function initializeTables() {
       notes TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS incentives (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      date DATETIME NOT NULL,
+      amount REAL NOT NULL,
+      provider TEXT,
+      description TEXT,
+      category TEXT DEFAULT 'Commission',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
 };
@@ -1387,6 +1407,80 @@ export function getInvoicePaymentData(invoiceId: number): InvoicePayment | null 
     notes: payment.notes,
     created_at: payment.created_at
   };
+}
+
+// ---------- Incentive Functions ---------- //
+
+export function createIncentive(incentive: Omit<Incentive, 'id' | 'created_at'>): number {
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO incentives (date, amount, provider, description, category)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+    const result = stmt.run(
+      incentive.date,
+      incentive.amount,
+      incentive.provider || null,
+      incentive.description || null,
+      incentive.category || 'Commission'
+    );
+    return result.lastInsertRowid as number;
+  } catch (error) {
+    console.error('Incentive creation failed:', error);
+    throw error;
+  }
+}
+
+export function getAllIncentives(): Incentive[] {
+  return db.prepare(`
+    SELECT * FROM incentives 
+    ORDER BY created_at DESC
+  `).all() as Incentive[];
+}
+
+export function getIncentiveById(id: number): Incentive | undefined {
+  return db.prepare("SELECT * FROM incentives WHERE id = ?").get(id) as Incentive | undefined;
+}
+
+export function updateIncentive(id: number, incentive: Partial<Omit<Incentive, 'id' | 'created_at'>>): boolean {
+  try {
+    const existing = getIncentiveById(id);
+    if (!existing) {
+      throw new Error('Incentive not found');
+    }
+    
+    const stmt = db.prepare(`
+      UPDATE incentives 
+      SET date = ?,
+          amount = ?,
+          provider = ?,
+          description = ?,
+          category = ?
+      WHERE id = ?
+    `);
+    stmt.run(
+      incentive.date || existing.date,
+      incentive.amount !== undefined ? incentive.amount : existing.amount,
+      incentive.provider !== undefined ? (incentive.provider || null) : existing.provider,
+      incentive.description !== undefined ? (incentive.description || null) : existing.description,
+      incentive.category || existing.category || 'Commission',
+      id
+    );
+    return true;
+  } catch (error) {
+    console.error('Incentive update failed:', error);
+    throw error;
+  }
+}
+
+export function deleteIncentive(id: number): boolean {
+  try {
+    db.prepare("DELETE FROM incentives WHERE id = ?").run(id);
+    return true;
+  } catch (error) {
+    console.error('Incentive deletion failed:', error);
+    return false;
+  }
 }
 
 // ---------- Service Functions ---------- //

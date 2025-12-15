@@ -88,7 +88,7 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
                 <div className="invoice-info-right-new">
                   <span className="invoice-info-label-new">Invoice No:</span>
                   <span className="invoice-number-value-new">{invoice.invoiceNumber}</span>
-                </div>
+                  </div>
               </div>
               <div className="header-row-new">
                 <div className="customer-detail-row-new">
@@ -115,7 +115,7 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
                       <span className="invoice-info-label-new">Ref No:</span>
                       <span className="invoice-ref-value-new">{invoice.refNo}</span>
                     </>
-                  )}
+              )}
                 </div>
               </div>
             </div>
@@ -124,31 +124,31 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
             
             {/* Services Table */}
             <table className="services-table-new">
-              <thead>
-                <tr>
+                  <thead>
+                    <tr>
                   <th>Sl. No</th>
-                  <th>Service</th>
-                  <th>Description</th>
+                      <th>Service</th>
+                      <th>Description</th>
                   <th className="price-cell-new">Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoice.items.map((item, index) => (
-                  <tr key={index}>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice.items.map((item, index) => (
+                      <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{item.serviceName}</td>
                     <td>{item.serviceDescription || '-'}</td>
                     <td className="price-cell-new">
                       {item.price.toFixed(2)} {invoice.currency}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
             
             <div className="separator-line-new"></div>
             
-            {/* Totals Section */}
+          {/* Totals Section */}
             <div className="totals-section-new">
               <div className="total-row-new">
                 <span className="total-label-new">Subtotal:</span>

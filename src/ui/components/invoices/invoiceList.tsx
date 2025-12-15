@@ -10,6 +10,8 @@ interface InvoiceListProps {
   onTrackPayment: (invoice: Invoice) => void;
   onCreateNew: () => void;
   isLoading?: boolean;
+  sortOption: 'newest' | 'oldest' | 'paid' | 'pending' | 'unpaid';
+  onChangeSort: (option: 'newest' | 'oldest' | 'paid' | 'pending' | 'unpaid') => void;
 }
 
 const InvoiceList: React.FC<InvoiceListProps> = ({ 
@@ -20,7 +22,9 @@ const InvoiceList: React.FC<InvoiceListProps> = ({
   onDownloadInvoice,
   onTrackPayment,
   onCreateNew,
-  isLoading 
+  isLoading,
+  sortOption,
+  onChangeSort
 }) => {
   
   const getPaymentStatusClass = (status?: string) => {
@@ -52,31 +56,36 @@ const InvoiceList: React.FC<InvoiceListProps> = ({
           <h2 className="invoice-list-title">Invoices</h2>
           <span className="invoice-count-badge">{invoices.length}</span>
         </div>
-        <button
-          onClick={onCreateNew}
-          className="btn btn-primary btn-modern"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          New Invoice
-        </button>
+        <div className="sort-container">
+          <select
+            className="sort-select"
+            value={sortOption}
+            onChange={(e) => onChangeSort(e.target.value as any)}
+            aria-label="Sort invoices"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="paid">Paid first</option>
+            <option value="pending">Pending first</option>
+            <option value="unpaid">Unpaid first</option>
+          </select>
+        </div>
       </div>
       
       {invoices.length === 0 ? (
         <div className="invoice-empty-state-modern">
-          <div className="empty-icon">📄</div>
           <div className="empty-state-title-modern">No invoices yet</div>
           <div className="empty-state-description-modern">
             Create your first invoice to get started
           </div>
-          <button
-            onClick={onCreateNew}
-            className="btn btn-primary btn-modern"
-          >
-            Create First Invoice
-          </button>
+          <div className="empty-state-actions">
+            <button
+              onClick={onCreateNew}
+              className="btn btn-primary btn-modern"
+            >
+              Create First Invoice
+            </button>
+          </div>
         </div>
       ) : (
         <div className="invoice-list-modern">

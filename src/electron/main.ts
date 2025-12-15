@@ -3,7 +3,7 @@ import { createMenu } from './menu.js';
 import { createTray } from './tray.js';
 import { ipcMainHandle, ipcMainOn, isDev } from './util.js';
 import { getPreloadPath, getUIPath, getAssetPath } from './pathResolver.js';
-import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency, addOrUpdateInvoicePayment, getInvoicePaymentData } from './database.js';
+import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency, addOrUpdateInvoicePayment, getInvoicePaymentData, createIncentive, getAllIncentives, getIncentiveById, updateIncentive, deleteIncentive } from './database.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -303,6 +303,27 @@ ipcMainHandle('update-service', (payload) => {
 
 ipcMainHandle('delete-service', (payload) => {
   return deleteService(payload.id);
+});
+
+// Incentive IPC Handlers
+ipcMainHandle('create-incentive', async (payload) => {
+  return createIncentive(payload.incentive);
+});
+
+ipcMainHandle('get-incentives', async () => {
+  return getAllIncentives();
+});
+
+ipcMainHandle('get-incentive', async (payload) => {
+  return getIncentiveById(payload.id);
+});
+
+ipcMainHandle('update-incentive', async (payload) => {
+  return updateIncentive(payload.id, payload.incentive);
+});
+
+ipcMainHandle('delete-incentive', async (payload) => {
+  return deleteIncentive(payload.id);
 });
 
 // Navigation Handler

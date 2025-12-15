@@ -25,6 +25,14 @@ export default function FinancialInsights() {
     }
   );
 
+  // Get all invoices for payment analytics (reuse invoices API)
+  const { data: allInvoices, isLoading: invoicesLoading } = useQuery(
+    ['all-invoices-payment'],
+    async () => {
+      return await (window.electronAPI as any).getInvoices();
+    }
+  );
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -150,6 +158,96 @@ export default function FinancialInsights() {
               </div>
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Payment Status Analytics */}
+      <div className="card">
+        <h3>Payment Status</h3>
+        {invoicesLoading ? (
+          <div className="loading">Loading...</div>
+        ) : (
+          (() => {
+            const invoices = allInvoices || [];
+            const totalBilled = invoices.reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+            const totalCollected = invoices.reduce((sum, inv) => sum + (inv.amountPaid || 0), 0);
+            const totalOutstanding = invoices.reduce((sum, inv) => sum + (inv.remainingBalance || 0), 0);
+            const collectionRate = totalBilled > 0 ? (totalCollected / totalBilled) * 100 : 0;
+            
+            const paidCount = invoices.filter(inv => inv.paymentStatus === 'paid').length;
+            const pendingCount = invoices.filter(inv => inv.paymentStatus === 'pending').length;
+            const unpaidCount = invoices.filter(inv => inv.paymentStatus === 'unpaid').length;
+            
+            const paidAmount = invoices
+              .filter(inv => inv.paymentStatus === 'paid')
+              .reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+            const pendingAmount = invoices
+              .filter(inv => inv.paymentStatus === 'pending')
+              .reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+            const unpaidAmount = invoices
+              .filter(inv => inv.paymentStatus === 'unpaid')
+              .reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+
+            // Payment method breakdown
+            const paymentMethods: Record<string, number> = {};
+            invoices.forEach(inv => {
+              // We'll need to get payment method from payment data
+              // For now, we'll use a placeholder
+            });
+
+            return (
+              <div className="payment-status-overview">
+                <div className="profit-stats">
+                  <div className="stat-item">
+                    <div className="stat-label">Total Billed</div>
+                    <div className="stat-value">{formatCurrency(totalBilled)}</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-label">Collected</div>
+                    <div className="stat-value profit-positive">{formatCurrency(totalCollected)}</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-label">Outstanding</div>
+                    <div className="stat-value" style={{ color: '#ef4444' }}>{formatCurrency(totalOutstanding)}</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-label">Collection Rate</div>
+                    <div className="stat-value profit-positive">{formatPercentage(collectionRate)}</div>
+                  </div>
+                </div>
+                
+                <div className="payment-status-breakdown">
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">Paid</div>
+                    <div className="breakdown-value">
+                      <span style={{ color: '#10b981' }}>{formatCurrency(paidAmount)}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '8px' }}>
+                        ({formatNumber(paidCount)} invoices)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">Pending</div>
+                    <div className="breakdown-value">
+                      <span style={{ color: '#f59e0b' }}>{formatCurrency(pendingAmount)}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '8px' }}>
+                        ({formatNumber(pendingCount)} invoices)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">Unpaid</div>
+                    <div className="breakdown-value">
+                      <span style={{ color: '#ef4444' }}>{formatCurrency(unpaidAmount)}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '8px' }}>
+                        ({formatNumber(unpaidCount)} invoices)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()
         )}
       </div>
 

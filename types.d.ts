@@ -214,6 +214,27 @@ type ElectronAPI = {
   }) => Promise<boolean>;
   getInvoicePayment: (invoiceId: number) => Promise<any>;
   
+  // Incentive operations
+  createIncentive: (incentive: {
+    date: string;
+    amount: number;
+    provider?: string;
+    description?: string;
+    category?: string;
+  }) => Promise<number>;
+  getIncentives: () => Promise<Array<{
+    id?: number;
+    date: string;
+    amount: number;
+    provider?: string;
+    description?: string;
+    category?: string;
+    created_at?: string;
+  }>>;
+  getIncentive: (id: number) => Promise<any>;
+  updateIncentive: (id: number, incentive: any) => Promise<boolean>;
+  deleteIncentive: (id: number) => Promise<boolean>;
+  
   // Analytics API
   getMonthlyRevenue: (year: string) => Promise<any[]>;
   getYearlyRevenue: () => Promise<any[]>;

@@ -1,7 +1,7 @@
 {
   "name": "essar_invoices_and_business_management_system",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.1.1",
   "description": "Invoice and Business management system for ESSAR Travel Hub",
   "author": "Shahid",
   "type": "module",

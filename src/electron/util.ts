@@ -99,6 +99,37 @@ interface EventPayloadMapping {
     return: any;
   };
 
+  'create-incentive': {
+    incentive: {
+      date: string;
+      amount: number;
+      provider?: string;
+      description?: string;
+      category?: string;
+    };
+    return: number;
+  };
+
+  'get-incentives': {
+    return: any[];
+  };
+
+  'get-incentive': {
+    id: number;
+    return: any;
+  };
+
+  'update-incentive': {
+    id: number;
+    incentive: any;
+    return: boolean;
+  };
+
+  'delete-incentive': {
+    id: number;
+    return: boolean;
+  };
+
   'get-daily-sales': {
     date: string;
     return: Array<{

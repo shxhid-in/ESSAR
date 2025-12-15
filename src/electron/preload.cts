@@ -17,6 +17,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addOrUpdateInvoicePayment: (invoiceId: number, paymentData: any) => ipcRenderer.invoke('add-or-update-invoice-payment', { invoiceId, paymentData }),
   getInvoicePayment: (invoiceId: number) => ipcRenderer.invoke('get-invoice-payment', { invoiceId }),
   
+  // Incentive operations
+  createIncentive: (incentive: any) => ipcRenderer.invoke('create-incentive', { incentive }),
+  getIncentives: () => ipcRenderer.invoke('get-incentives'),
+  getIncentive: (id: number) => ipcRenderer.invoke('get-incentive', { id }),
+  updateIncentive: (id: number, incentive: any) => ipcRenderer.invoke('update-incentive', { id, incentive }),
+  deleteIncentive: (id: number) => ipcRenderer.invoke('delete-incentive', { id }),
+  
   // Customer operations
   getCustomers: () => ipcRenderer.invoke('get-customers'),
   searchCustomers: (query: string) => ipcRenderer.invoke('search-customers', { query }),

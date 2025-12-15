@@ -16,6 +16,12 @@ export function createMenu(mainWindow: BrowserWindow) {
           mainWindow.webContents.send('navigate', 'customers');}
       },
       {
+        label: 'Incentives',
+        click: () => {
+          mainWindow.webContents.send('navigate', 'incentives');
+        }
+      },
+      {
         label: 'Analytics',
         click: () => {
           mainWindow.webContents.send('navigate', 'reports');
