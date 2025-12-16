@@ -81,7 +81,6 @@ const getSignatureAsBase64 = (): string => {
     if (signatureSvgRaw && typeof signatureSvgRaw === 'string') {
       const base64 = btoa(signatureSvgRaw);
       const dataUri = 'data:image/svg+xml;base64,' + base64;
-      console.log('Signature loaded successfully, base64 length:', base64.length);
       return dataUri;
     }
     console.warn('Signature SVG raw string is not available');

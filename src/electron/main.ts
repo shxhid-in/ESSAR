@@ -359,25 +359,17 @@ function getSignatureAsBase64(): string {
   try {
     const assetPath = getAssetPath();
     const signaturePath = path.join(assetPath, 'seal&signature.svg');
-    
-    // Log paths for debugging
-    console.log('Asset path:', assetPath);
-    console.log('Signature path:', signaturePath);
-    console.log('File exists:', fs.existsSync(signaturePath));
-    
+   
     if (!fs.existsSync(signaturePath)) {
       console.error('Signature file not found at:', signaturePath);
       // Try alternative paths
       const altPath1 = path.join(app.getAppPath(), 'src', 'assets', 'seal&signature.svg');
       const altPath2 = path.join(path.dirname(app.getPath('exe')), 'resources', 'src', 'assets', 'seal&signature.svg');
-      console.log('Trying alternative path 1:', altPath1, 'exists:', fs.existsSync(altPath1));
-      console.log('Trying alternative path 2:', altPath2, 'exists:', fs.existsSync(altPath2));
       return '';
     }
     
     const svg = fs.readFileSync(signaturePath, 'utf8');
     const base64 = Buffer.from(svg).toString('base64');
-    console.log('Signature loaded successfully, base64 length:', base64.length);
     return `data:image/svg+xml;base64,${base64}`;
   } catch (error) {
     console.error('Error loading signature:', error);
@@ -390,25 +382,17 @@ function getPNGLogoAsBase64(): string {
   try {
     const assetPath = getAssetPath();
     const logoPath = path.join(assetPath, 'letterpadIcon.png');
-    
-    // Log paths for debugging
-    console.log('Asset path:', assetPath);
-    console.log('Logo path:', logoPath);
-    console.log('File exists:', fs.existsSync(logoPath));
-    
+
     if (!fs.existsSync(logoPath)) {
       console.error('Logo file not found at:', logoPath);
       // Try alternative paths
       const altPath1 = path.join(app.getAppPath(), 'src', 'assets', 'letterpadIcon.png');
       const altPath2 = path.join(path.dirname(app.getPath('exe')), 'resources', 'src', 'assets', 'letterpadIcon.png');
-      console.log('Trying alternative path 1:', altPath1, 'exists:', fs.existsSync(altPath1));
-      console.log('Trying alternative path 2:', altPath2, 'exists:', fs.existsSync(altPath2));
       return '';
     }
     
     const pngBuffer = fs.readFileSync(logoPath);
     const base64 = pngBuffer.toString('base64');
-    console.log('Logo loaded successfully, base64 length:', base64.length);
     return `data:image/png;base64,${base64}`;
   } catch (error) {
     console.error('Error loading logo:', error);
