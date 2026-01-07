@@ -215,9 +215,9 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
             
             {/* Contact Section */}
             {contactDetails && (
-              <div className="contact-section-new">
-                <div className="contact-title-new">Contact Details</div>
-                <div className="contact-info-new">
+            <div className="contact-section-new">
+              <div className="contact-title-new">Contact Details</div>
+              <div className="contact-info-new">
                   {contactDetails.split('\n').map((line, index) => (
                     <div key={index}>{line}</div>
                   ))}

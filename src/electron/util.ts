@@ -99,6 +99,16 @@ interface EventPayloadMapping {
     return: any;
   };
 
+  'get-invoice-payment-history': {
+    invoiceId: number;
+    return: any[];
+  };
+
+  'delete-invoice-payment': {
+    paymentId: number;
+    return: boolean;
+  };
+
   'create-incentive': {
     incentive: {
       date: string;

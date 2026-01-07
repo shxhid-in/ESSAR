@@ -21,17 +21,17 @@ export default function Header({ title, subtitle }: HeaderProps) {
     <div className="page-header">
       <div className="header-content">
         {secondaryLogo && (
-          <div className="header-logo">
-            <img 
+        <div className="header-logo">
+          <img 
               src={secondaryLogo} 
               alt="Company Logo" 
-              className="header-logo-img"
-              onError={(e) => {
-                // Fallback if image doesn't load
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          </div>
+            className="header-logo-img"
+            onError={(e) => {
+              // Fallback if image doesn't load
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        </div>
         )}
         <div className="header-text">
           <h1 className="page-title">{title}</h1>

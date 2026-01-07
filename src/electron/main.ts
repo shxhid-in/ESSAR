@@ -3,7 +3,7 @@ import { createMenu } from './menu.js';
 import { createTray } from './tray.js';
 import { ipcMainHandle, ipcMainOn, isDev } from './util.js';
 import { getPreloadPath, getUIPath, getAssetPath } from './pathResolver.js';
-import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency, addOrUpdateInvoicePayment, getInvoicePaymentData, createIncentive, getAllIncentives, getIncentiveById, updateIncentive, deleteIncentive } from './database.js';
+import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency, addOrUpdateInvoicePayment, getInvoicePaymentData, getInvoicePaymentHistory, deleteInvoicePayment, createIncentive, getAllIncentives, getIncentiveById, updateIncentive, deleteIncentive } from './database.js';
 import { exportInvoicesToExcel, exportCustomersToExcel, exportAllToSingleExcel, importFromExcel, ExportOptions } from './excelUtils.js';
 import { dialog } from 'electron';
 import fs from 'fs';
@@ -50,6 +50,79 @@ app.whenReady().then(() => {
 mainWindow.webContents.on('did-finish-load', () => {
   // Frontend loaded - verifying React mount
 });
+
+// Migrate existing images from old location (resources/assets/logos) to new location (userData/assets/logos)
+function migrateImagesToUserData() {
+  try {
+    const settings = settingsDB.getSettings();
+    const userDataPath = app.getPath('userData');
+    const newLogosDir = path.join(userDataPath, 'assets', 'logos');
+    
+    // Ensure new directory exists
+    if (!fs.existsSync(newLogosDir)) {
+      fs.mkdirSync(newLogosDir, { recursive: true });
+    }
+    
+    // Migrate primary logo
+    if (settings.primary_logo_path && fs.existsSync(settings.primary_logo_path)) {
+      const oldPath = settings.primary_logo_path;
+      // Check if it's in the old location (resources/assets/logos)
+      const assetPath = getAssetPath();
+      const oldLogosDir = path.join(assetPath, 'logos');
+      
+      if (oldPath.startsWith(oldLogosDir) || oldPath.includes('resources')) {
+        const fileName = path.basename(oldPath);
+        const newPath = path.join(newLogosDir, fileName);
+        
+        // Only migrate if new path doesn't exist
+        if (!fs.existsSync(newPath)) {
+          fs.copyFileSync(oldPath, newPath);
+          settingsDB.updateSettings({ primary_logo_path: newPath });
+        }
+      }
+    }
+    
+    // Migrate secondary logo
+    if (settings.secondary_logo_path && fs.existsSync(settings.secondary_logo_path)) {
+      const oldPath = settings.secondary_logo_path;
+      const assetPath = getAssetPath();
+      const oldLogosDir = path.join(assetPath, 'logos');
+      
+      if (oldPath.startsWith(oldLogosDir) || oldPath.includes('resources')) {
+        const fileName = path.basename(oldPath);
+        const newPath = path.join(newLogosDir, fileName);
+        
+        if (!fs.existsSync(newPath)) {
+          fs.copyFileSync(oldPath, newPath);
+          settingsDB.updateSettings({ secondary_logo_path: newPath });
+        }
+      }
+    }
+    
+    // Migrate seal photo
+    if (settings.seal_photo_path && fs.existsSync(settings.seal_photo_path)) {
+      const oldPath = settings.seal_photo_path;
+      const assetPath = getAssetPath();
+      const oldLogosDir = path.join(assetPath, 'logos');
+      
+      if (oldPath.startsWith(oldLogosDir) || oldPath.includes('resources')) {
+        const fileName = path.basename(oldPath);
+        const newPath = path.join(newLogosDir, fileName);
+        
+        if (!fs.existsSync(newPath)) {
+          fs.copyFileSync(oldPath, newPath);
+          settingsDB.updateSettings({ seal_photo_path: newPath });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error migrating images to user data directory:', error);
+    // Don't throw - migration failure shouldn't prevent app from starting
+  }
+}
+
+// Run image migration on app startup
+migrateImagesToUserData();
 
 createTray(mainWindow);
 createMenu(mainWindow);
@@ -144,6 +217,14 @@ ipcMainHandle('add-or-update-invoice-payment', async (payload) => {
 
 ipcMainHandle('get-invoice-payment', async (payload) => {
   return getInvoicePaymentData(payload.invoiceId);
+});
+
+ipcMainHandle('get-invoice-payment-history', async (payload) => {
+  return getInvoicePaymentHistory(payload.invoiceId);
+});
+
+ipcMainHandle('delete-invoice-payment', async (payload) => {
+  return deleteInvoicePayment(payload.paymentId);
 });
 
 ipcMainHandle('get-signature-base64', async () => {
@@ -470,8 +551,8 @@ ipcMainHandle('upload-logo', async (payload: { logoType: 'primary' | 'secondary'
     const stats = fs.statSync(filePath);
     const fileSizeInMB = stats.size / (1024 * 1024);
     
-    // Validate file size (500KB for primary, 200KB for secondary)
-    const maxSize = logoType === 'primary' ? 0.5 : 0.2;
+    // Validate file size (800KB for primary, 500KB for secondary)
+    const maxSize = logoType === 'primary' ? 0.8 : 0.5;
     if (fileSizeInMB > maxSize) {
       return { 
         success: false, 
@@ -486,14 +567,14 @@ ipcMainHandle('upload-logo', async (payload: { logoType: 'primary' | 'secondary'
       return { success: false, error: 'Invalid file format. Please use PNG, JPG, or SVG' };
     }
     
-    // Create logos directory in assets if it doesn't exist
-    const assetPath = getAssetPath();
-    const logosDir = path.join(assetPath, 'logos');
+    // Create logos directory in user data directory (writable, persists across updates)
+    const userDataPath = app.getPath('userData');
+    const logosDir = path.join(userDataPath, 'assets', 'logos');
     if (!fs.existsSync(logosDir)) {
       fs.mkdirSync(logosDir, { recursive: true });
     }
     
-    // Copy file to assets/logos directory
+    // Copy file to user data/assets/logos directory
     const fileName = `${logoType}-logo${ext}`;
     const destPath = path.join(logosDir, fileName);
     
@@ -610,8 +691,8 @@ ipcMainHandle('upload-seal-photo', async (payload: { filePath: string }) => {
     const stats = fs.statSync(filePath);
     const fileSizeInMB = stats.size / (1024 * 1024);
     
-    // Validate file size (500KB for seal photo)
-    const maxSize = 0.5;
+    // Validate file size (900KB for seal photo)
+    const maxSize = 0.9;
     if (fileSizeInMB > maxSize) {
       return { 
         success: false, 
@@ -626,14 +707,14 @@ ipcMainHandle('upload-seal-photo', async (payload: { filePath: string }) => {
       return { success: false, error: 'Invalid file type. Allowed: PNG, JPG, JPEG, SVG' };
     }
     
-    // Create logos directory if it doesn't exist
-    const assetPath = getAssetPath();
-    const logosDir = path.join(assetPath, 'logos');
+    // Create logos directory in user data directory (writable, persists across updates)
+    const userDataPath = app.getPath('userData');
+    const logosDir = path.join(userDataPath, 'assets', 'logos');
     if (!fs.existsSync(logosDir)) {
       fs.mkdirSync(logosDir, { recursive: true });
     }
     
-    // Copy file to logos directory
+    // Copy file to user data/assets/logos directory
     const fileName = `seal-photo${ext}`;
     const destPath = path.join(logosDir, fileName);
     fs.copyFileSync(filePath, destPath);

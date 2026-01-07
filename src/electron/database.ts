@@ -1394,23 +1394,35 @@ function calculatePaymentStatus(amountPaid: number, grandTotal: number): 'unpaid
   return 'pending';
 }
 
-// Helper function to get payment for invoice
+// Helper function to get payment summary for invoice (total of all payments)
 function getInvoicePayment(invoiceId: number): { amountPaid: number; paymentDate: string; paymentMethod: string; notes?: string } | null {
-  const payment = db.prepare(`
-    SELECT amount_paid, payment_date, payment_method, notes 
+  // Get total amount paid from all payments
+  const totalResult = db.prepare(`
+    SELECT COALESCE(SUM(amount_paid), 0) as total_paid 
+    FROM invoice_payments 
+    WHERE invoice_id = ?
+  `).get(invoiceId) as any;
+  
+  const totalPaid = totalResult?.total_paid || 0;
+  
+  if (totalPaid === 0) return null;
+  
+  // Get the most recent payment for date/method/notes
+  const latestPayment = db.prepare(`
+    SELECT payment_date, payment_method, notes 
     FROM invoice_payments 
     WHERE invoice_id = ? 
     ORDER BY created_at DESC 
     LIMIT 1
   `).get(invoiceId) as any;
   
-  if (!payment) return null;
+  if (!latestPayment) return null;
   
   return {
-    amountPaid: payment.amount_paid || 0,
-    paymentDate: payment.payment_date,
-    paymentMethod: payment.payment_method || 'Cash',
-    notes: payment.notes
+    amountPaid: totalPaid,
+    paymentDate: latestPayment.payment_date,
+    paymentMethod: latestPayment.payment_method || 'Cash',
+    notes: latestPayment.notes
   };
 }
 
@@ -1565,44 +1577,40 @@ export function addOrUpdateInvoicePayment(invoiceId: number, paymentData: {
   notes?: string;
 }): boolean {
   try {
-    // Validate amount - cap at grand total
+    // Validate invoice exists
     const invoice = db.prepare("SELECT grand_total FROM invoices WHERE id = ?").get(invoiceId) as any;
     if (!invoice) {
       throw new Error('Invoice not found');
     }
     
-    // Cap amount at grand total
-    const amountPaid = Math.min(paymentData.amountPaid, invoice.grand_total);
+    // Get current total paid
+    const currentTotal = db.prepare(`
+      SELECT COALESCE(SUM(amount_paid), 0) as total_paid 
+      FROM invoice_payments 
+      WHERE invoice_id = ?
+    `).get(invoiceId) as any;
     
-    // Check if payment exists
-    const existingPayment = db.prepare("SELECT id FROM invoice_payments WHERE invoice_id = ?").get(invoiceId) as any;
+    const currentTotalPaid = currentTotal?.total_paid || 0;
+    const newPaymentAmount = paymentData.amountPaid;
+    const newTotal = currentTotalPaid + newPaymentAmount;
     
-    if (existingPayment) {
-      // Update existing payment
-      db.prepare(`
-        UPDATE invoice_payments 
-        SET amount_paid = ?, payment_date = ?, payment_method = ?, notes = ?
-        WHERE invoice_id = ?
-      `).run(
-        amountPaid,
-        paymentData.paymentDate,
-        paymentData.paymentMethod,
-        paymentData.notes || null,
-        invoiceId
-      );
-    } else {
-      // Insert new payment
-      db.prepare(`
-        INSERT INTO invoice_payments (invoice_id, amount_paid, payment_date, payment_method, notes)
-        VALUES (?, ?, ?, ?, ?)
-      `).run(
-        invoiceId,
-        amountPaid,
-        paymentData.paymentDate,
-        paymentData.paymentMethod,
-        paymentData.notes || null
-      );
+    // Validate that new total doesn't exceed grand total
+    if (newTotal > invoice.grand_total) {
+      const maxAllowed = invoice.grand_total - currentTotalPaid;
+      throw new Error(`Payment amount exceeds remaining balance. Maximum allowed: ${invoice.grand_total - currentTotalPaid}`);
     }
+    
+    // Always insert new payment (additive approach)
+    db.prepare(`
+      INSERT INTO invoice_payments (invoice_id, amount_paid, payment_date, payment_method, notes)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(
+      invoiceId,
+      newPaymentAmount,
+      paymentData.paymentDate,
+      paymentData.paymentMethod,
+      paymentData.notes || null
+    );
     
     return true;
   } catch (error) {
@@ -1627,6 +1635,39 @@ export function getInvoicePaymentData(invoiceId: number): InvoicePayment | null 
     notes: payment.notes,
     created_at: payment.created_at
   };
+}
+
+// Get all payment history for an invoice (newest first)
+export function getInvoicePaymentHistory(invoiceId: number): InvoicePayment[] {
+  const payments = db.prepare(`
+    SELECT * FROM invoice_payments 
+    WHERE invoice_id = ? 
+    ORDER BY created_at DESC
+  `).all(invoiceId) as any[];
+  
+  return payments.map(payment => ({
+    id: payment.id,
+    invoice_id: payment.invoice_id,
+    amount_paid: payment.amount_paid,
+    payment_date: payment.payment_date,
+    payment_method: payment.payment_method,
+    notes: payment.notes,
+    created_at: payment.created_at
+  }));
+}
+
+// Delete a specific payment entry
+export function deleteInvoicePayment(paymentId: number): boolean {
+  try {
+    const result = db.prepare(`
+      DELETE FROM invoice_payments WHERE id = ?
+    `).run(paymentId);
+    
+    return result.changes > 0;
+  } catch (error) {
+    console.error('Payment delete failed:', error);
+    throw error;
+  }
 }
 
 // ---------- Incentive Functions ---------- //

@@ -45,15 +45,15 @@ export default function SettingsPage() {
       
       <div className="settings-container-horizontal">
         <div className="settings-tabs-horizontal">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
               className={`settings-tab-horizontal ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
         </div>
         
         <div className="settings-content-horizontal">

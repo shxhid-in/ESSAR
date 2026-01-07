@@ -2881,18 +2881,26 @@ body {
 
 /* Payment Modal Styles */
 .payment-modal {
-  max-width: 900px;
+  max-width: 1400px;
   width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .payment-modal .modal-header {
-  padding: 16px 20px;
+  padding: 16px 24px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .payment-modal .modal-body {
-  max-height: none;
-  overflow: visible;
-  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  min-height: 0;
 }
 
 .payment-modal .form-textarea {
@@ -3064,6 +3072,203 @@ body {
 .btn-sm {
   padding: 6px 12px;
   font-size: 12px;
+}
+
+/* Payment Content Grid - Two Column Layout */
+.payment-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.payment-history-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.payment-history-column .payment-history-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  flex-shrink: 0;
+}
+
+.payment-history-column .payment-history-table-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.add-payment-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-payment-column .add-payment-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+}
+
+/* Payment History Styles */
+.payment-history-section {
+  margin-bottom: 24px;
+}
+
+.payment-history-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.payment-history-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  max-height: calc(90vh - 300px);
+}
+
+.payment-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.payment-history-table thead {
+  background-color: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.payment-history-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-history-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.payment-history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.payment-history-table tbody tr:hover {
+  background-color: var(--bg-secondary);
+}
+
+.payment-history-table .amount-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.payment-history-table .balance-cell {
+  font-weight: 600;
+}
+
+
+.payment-history-table .action-btn-modern {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.payment-history-table .action-btn-modern:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.payment-history-table .action-btn-modern.delete:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.payment-history-table .action-btn-modern:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Add Payment Section */
+.add-payment-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border-color);
+}
+
+.add-payment-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.add-payment-column .payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.add-payment-column .form-group {
+  margin: 0;
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+.add-payment-column .payment-form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.payment-complete-message {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #d1fae5;
+  border: 1px solid #10b981;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.payment-complete-message p {
+  margin: 0;
+  color: #065f46;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.loading-state {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
 }
 
 /* New Invoice Viewer Styles */

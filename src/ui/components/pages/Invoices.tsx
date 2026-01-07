@@ -553,7 +553,7 @@ export default function InvoicesPage() {
                   <div class="signature-row">
                     <div class="signature-label">Customer Signature</div>
                     <div style="text-align: right;">
-                      <div class="signature-label">Authorised Signature</div>
+                    <div class="signature-label">Authorised Signature</div>
                     </div>
                   </div>
                   
