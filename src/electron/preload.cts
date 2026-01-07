@@ -47,6 +47,28 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getSettings: () => ipcRenderer.invoke('get-settings'),
   updateSettings: (settings: any) => ipcRenderer.invoke('update-settings', { settings }),
   
+  // Excel Import/Export operations
+  exportData: (options: any) => ipcRenderer.invoke('export-data', { options }),
+  importData: (filePath?: string, filePaths?: string[]) => ipcRenderer.invoke('import-data', { filePath, filePaths }),
+  selectImportFile: () => ipcRenderer.invoke('select-import-file'),
+  
+  // Logo operations
+  uploadLogo: (logoType: 'primary' | 'secondary', filePath: string) => ipcRenderer.invoke('upload-logo', { logoType, filePath }),
+  selectLogoFile: (logoType: 'primary' | 'secondary') => ipcRenderer.invoke('select-logo-file', { logoType }),
+  getPrimaryLogoBase64: () => ipcRenderer.invoke('get-primary-logo-base64'),
+  getSecondaryLogoBase64: () => ipcRenderer.invoke('get-secondary-logo-base64'),
+  
+  // Seal photo operations
+  uploadSealPhoto: (filePath: string) => ipcRenderer.invoke('upload-seal-photo', { filePath }),
+  selectSealPhotoFile: () => ipcRenderer.invoke('select-seal-photo-file'),
+  getSealPhotoBase64: () => ipcRenderer.invoke('get-seal-photo-base64'),
+  
+  // Modal events
+  onOpenImportExportModal: (callback: () => void) => {
+    ipcRenderer.on('open-import-export-modal', () => callback());
+    return () => ipcRenderer.removeAllListeners('open-import-export-modal');
+  },
+  
   // Report operations
   getDailySales: (date: string) => ipcRenderer.invoke('get-daily-sales', { date }),
   getTopServices: (limit?: number) => ipcRenderer.invoke('get-top-services', { limit: limit || 5 }),

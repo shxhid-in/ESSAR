@@ -169,6 +169,22 @@ interface EventPayloadMapping {
   'get-daily-performance': { days?: number; return: any[]; };
   'get-weekly-performance': { weeks?: number; return: any[]; };
   'get-business-kpis': { return: any; };
+  
+  // Excel Import/Export
+  'export-data': { options: { exportAll: boolean; fromDate?: string; toDate?: string; exportFormat: 'single' | 'separate' }; return: any; };
+  'import-data': { filePath?: string; filePaths?: string[]; return: any; };
+  'select-import-file': { return: { canceled: boolean; filePath?: string | null; filePaths?: string[] }; };
+  
+  // Logo operations
+  'upload-logo': { logoType: 'primary' | 'secondary'; filePath: string; return: { success: boolean; filePath?: string; error?: string }; };
+  'select-logo-file': { logoType: 'primary' | 'secondary'; return: { canceled: boolean; filePath: string | null }; };
+  'get-primary-logo-base64': { return: string; };
+  'get-secondary-logo-base64': { return: string; };
+  
+  // Seal photo operations
+  'upload-seal-photo': { filePath: string; return: { success: boolean; filePath?: string; error?: string }; };
+  'select-seal-photo-file': { return: { canceled: boolean; filePath: string | null }; };
+  'get-seal-photo-base64': { return: string; };
 }
 
 

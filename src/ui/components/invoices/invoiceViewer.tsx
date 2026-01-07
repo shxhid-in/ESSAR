@@ -10,14 +10,29 @@ interface InvoiceViewerProps {
 const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
   const [logoBase64, setLogoBase64] = useState('');
   const [signatureBase64, setSignatureBase64] = useState('');
+  const [companyName, setCompanyName] = useState('ESSAR TRAVEL HUB');
+  const [contactDetails, setContactDetails] = useState('');
 
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        const logo = await (window.electronAPI as any).getLogoBase64();
-        const signature = await (window.electronAPI as any).getSignatureBase64();
+        // Load company details and logo from settings
+        const settings = await (window.electronAPI as any).getSettings();
+        setCompanyName(settings.company_name || 'ESSAR TRAVEL HUB');
+        setContactDetails(settings.company_contact_details || '');
+        
+        const logo = await (window.electronAPI as any).getPrimaryLogoBase64();
+        
+        // Get seal photo (no fallback - will show space if not available)
+        let sealPhoto = '';
+        try {
+          sealPhoto = await (window.electronAPI as any).getSealPhotoBase64();
+        } catch (error) {
+          console.warn('Failed to load seal photo:', error);
+        }
+        
         setLogoBase64(logo || '');
-        setSignatureBase64(signature || '');
+        setSignatureBase64(sealPhoto || '');
       } catch (error) {
         console.error('Failed to load assets:', error);
       }
@@ -65,9 +80,9 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
             {/* Logo Section */}
             <div className="logo-section-new">
               {logoBase64 ? (
-                <img src={logoBase64} alt="ESSAR TRAVELS Logo" className="logo-new" />
+                <img src={logoBase64} alt="Company Logo" className="logo-new" />
               ) : (
-                <h2 className="logo-text">ESSAR TRAVEL HUB</h2>
+                <h2 className="logo-text">{companyName}</h2>
               )}
             </div>
             
@@ -199,15 +214,16 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
             <div className="separator-line-new"></div>
             
             {/* Contact Section */}
-            <div className="contact-section-new">
-              <div className="contact-title-new">Contact Details</div>
-              <div className="contact-info-new">
-                <div>Samsudheen A</div>
-                <div>+91 9043738600</div>
-                <div>+971 559915534</div>
-                <div>essartravelhub@gmail.com</div>
+            {contactDetails && (
+              <div className="contact-section-new">
+                <div className="contact-title-new">Contact Details</div>
+                <div className="contact-info-new">
+                  {contactDetails.split('\n').map((line, index) => (
+                    <div key={index}>{line}</div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
             
             {/* Bottom Section */}
             <div className="bottom-section-new">
@@ -220,13 +236,15 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
               <div className="signatory-footer-new">
                 <div></div>
                 <div style={{ textAlign: 'right' }}>
-                  <div className="signatory-right-new">For ESSAR Travel Hub</div>
-                  {signatureBase64 && (
+                  <div className="signatory-right-new">For {companyName}</div>
+                  {signatureBase64 ? (
                     <img 
                       src={signatureBase64} 
                       alt="Authorised Signature" 
                       className="signature-image-new" 
                     />
+                  ) : (
+                    <div style={{ height: '60px', marginTop: '8px' }}></div>
                   )}
                 </div>
               </div>
@@ -236,11 +254,6 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
                 <div style={{ textAlign: 'right' }}>
                   <div className="signature-label-new">Authorised Signature</div>
                 </div>
-              </div>
-              
-              <div className="separator-line-new"></div>
-              <div className="address-footer-new">
-                Essar Style Walk and Travel Hub, 1202, B.B. Street, Town Hall, Coimbatore, Tamil Nadu. India. Pin-641001.
               </div>
             </div>
           </div>

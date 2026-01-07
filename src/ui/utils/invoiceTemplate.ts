@@ -29,13 +29,21 @@ const getLogoAsBase64 = async (): Promise<string> => {
 
   // Method 3: Text-based fallback (guaranteed to work)
   // Using text-based logo fallback
-  return getTextLogoBase64();
+  return await getTextLogoBase64();
 };
 
 // Method 1: PNG Logo (Primary - Most Reliable)
 const getPNGLogoBase64 = async (): Promise<string | null> => {
   try {
-    // Fetch PNG logo dynamically from assets folder via Electron API
+    // First try to get primary logo from settings
+    if (window.electronAPI && (window.electronAPI as any).getPrimaryLogoBase64) {
+      const primaryLogo = await (window.electronAPI as any).getPrimaryLogoBase64();
+      if (primaryLogo) {
+        return primaryLogo;
+      }
+    }
+    
+    // Fallback to old logo method
     if (window.electronAPI && window.electronAPI.getLogoBase64) {
       const pngBase64 = await window.electronAPI.getLogoBase64();
       if (pngBase64) {
@@ -62,19 +70,28 @@ const getSVGLogoBase64 = (): string | null => {
 };
 
 // Method 3: Text Logo (Final Fallback)
-const getTextLogoBase64 = (): string => {
+const getTextLogoBase64 = async (): Promise<string> => {
+  // Get company name from settings for text logo fallback
+  let companyName = 'ESSAR TRAVEL HUB';
+  try {
+    const settings = await (window.electronAPI as any).getSettings();
+    companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+  } catch (error) {
+    console.warn('Failed to load company name for text logo:', error);
+  }
+  
   // Create a simple text-based logo as SVG
   const textSvg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="250" height="60" viewBox="0 0 250 60">
   <rect width="250" height="60" fill="#ffffff" stroke="#5B818D" stroke-width="1" rx="4"/>
-  <text x="125" y="25" text-anchor="middle" fill="#5B818D" font-family="Arial, sans-serif" font-size="16" font-weight="bold">ESSAR TRAVELS</text>
+  <text x="125" y="25" text-anchor="middle" fill="#5B818D" font-family="Arial, sans-serif" font-size="16" font-weight="bold">${companyName}</text>
   <text x="125" y="45" text-anchor="middle" fill="#5B818D" font-family="Arial, sans-serif" font-size="10">Your Travel Partner</text>
 </svg>`;
   
   return 'data:image/svg+xml;base64,' + btoa(textSvg);
 };
 
-// Function to get signature as base64
+// Function to get signature as base64 (fallback)
 const getSignatureAsBase64 = (): string => {
   try {
     // In browser context, we import the SVG as a raw string
@@ -91,9 +108,56 @@ const getSignatureAsBase64 = (): string => {
   }
 };
 
+// Function to get seal photo as base64 (no fallback - returns empty string if not available)
+const getSealPhotoAsBase64 = async (): Promise<string> => {
+  try {
+    const settings = await (window.electronAPI as any).getSettings();
+    if (settings?.seal_photo_path) {
+      const base64 = await (window.electronAPI as any).getSealPhotoBase64();
+      if (base64) {
+        return base64;
+      }
+    }
+    // Return empty string if seal photo is not available (no fallback)
+    return '';
+  } catch (error) {
+    console.error('Error loading seal photo:', error);
+    return '';
+  }
+};
+
 export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
-  const logoBase64 = await getLogoAsBase64();
-  const signatureBase64 = getSignatureAsBase64();
+  // Get company details and primary logo from settings
+  let logoBase64 = '';
+  let companyName = 'ESSAR TRAVEL HUB';
+  let contactDetails = '';
+  let companyAddress = '';
+  let thankYouNote = 'THANKS FOR DOING BUSINESS WITH US';
+  
+  try {
+    const settings = await (window.electronAPI as any).getSettings();
+    companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+    contactDetails = settings.company_contact_details || '';
+    companyAddress = settings.company_address || '';
+    thankYouNote = settings.thank_you_note || 'THANKS FOR DOING BUSINESS WITH US';
+    
+    // Try to get primary logo from settings
+    if ((window.electronAPI as any).getPrimaryLogoBase64) {
+      logoBase64 = await (window.electronAPI as any).getPrimaryLogoBase64();
+    }
+    
+    // Fallback to old logo method if primary logo not available
+    if (!logoBase64) {
+      logoBase64 = await getLogoAsBase64();
+    }
+  } catch (error) {
+    console.warn('Failed to load company details, using defaults:', error);
+    // Fallback to old logo method
+    logoBase64 = await getLogoAsBase64();
+  }
+  
+  // Get seal photo (or fallback to signature SVG)
+  const sealPhotoBase64 = await getSealPhotoAsBase64();
   
   return `
     <!DOCTYPE html>
@@ -289,8 +353,7 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
             color: #666;
           }
           .signature-image {
-            max-width: 150px;
-            max-height: 80px;
+            max-width: 100%;
             height: auto;
             object-fit: contain;
             margin: 5px 0;
@@ -311,7 +374,7 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
       <body>
         <div class="invoice-container">
           <div class="logo-section">
-            <img src="${logoBase64}" alt="ESSAR TRAVELS Logo" class="logo">
+            ${logoBase64 ? `<img src="${logoBase64}" alt="Company Logo" class="logo">` : `<h2>${companyName}</h2>`}
           </div>
           
           <div class="separator-line"></div>
@@ -390,29 +453,28 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
           
           <div class="separator-line"></div>
           
+          ${contactDetails ? `
           <div class="contact-section">
             <div class="contact-title">Contact Details</div>
             <div class="contact-info">
-              <div>Samsudheen A</div>
-              <div>+91 9043738600</div>
-              <div>+971 559915534</div>
-              <div>essartravelhub@gmail.com</div>
+              ${contactDetails.split('\n').map((line: string) => `<div>${line}</div>`).join('')}
             </div>
           </div>
+          ` : ''}
           
           <div class="bottom-section">
             <div class="separator-line"></div>
             
             <div class="thanks-message">
-              THANKS FOR DOING BUSINESS WITH US
+              ${thankYouNote}
             </div>
             
             <div class="separator-line"></div>
             
             <div class="signatory-footer">
               <div style="text-align: right;">
-                <div class="signatory-right">For ESSAR Travel Hub</div>
-                ${signatureBase64 ? `<img src="${signatureBase64}" alt="Authorised Signature" class="signature-image" />` : ''}
+                <div class="signatory-right">For ${companyName}</div>
+                ${sealPhotoBase64 ? `<img src="${sealPhotoBase64}" alt="Authorised Signature" class="signature-image" />` : '<div style="height: 60px;"></div>'}
               </div>
             </div>
             
@@ -425,9 +487,12 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
             
             <div class="separator-line"></div>
             
+            ${companyAddress ? `
+            <div class="separator-line"></div>
+              ${companyAddress}
             <div class="address-footer">
-              Essar Style Walk and Travel Hub, 1202, B.B. Street, Town Hall, Coimbatore, Tamil Nadu. India. Pin-641001.
             </div>
+            ` : ''}
           </div>
         </div>
       </body>

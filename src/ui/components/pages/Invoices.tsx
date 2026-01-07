@@ -170,14 +170,29 @@ export default function InvoicesPage() {
 
   const handleDownloadInvoice = async (invoice: Invoice) => {
     try {
-      // Fetch logo base64 from assets folder
+      // Fetch company details and primary logo
+      const settings = await (window.electronAPI as any).getSettings();
+      const companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+      const contactDetails = settings.company_contact_details || '';
+      const companyAddress = settings.company_address || '';
+      const thankYouNote = settings.thank_you_note || 'THANKS FOR DOING BUSINESS WITH US';
       let logoBase64 = '';
+      let sealPhotoBase64 = '';
       try {
-        if (window.electronAPI && window.electronAPI.getLogoBase64) {
-          logoBase64 = await window.electronAPI.getLogoBase64();
+        if (window.electronAPI && (window.electronAPI as any).getPrimaryLogoBase64) {
+          logoBase64 = await (window.electronAPI as any).getPrimaryLogoBase64();
         }
       } catch (error) {
         console.warn('Failed to load logo, using fallback:', error);
+      }
+      
+      // Get seal photo (no fallback - will show space if not available)
+      try {
+        if (window.electronAPI && (window.electronAPI as any).getSealPhotoBase64) {
+          sealPhotoBase64 = await (window.electronAPI as any).getSealPhotoBase64();
+        }
+      } catch (error) {
+        console.warn('Failed to load seal photo:', error);
       }
       
       // Create a new window with the invoice template
@@ -385,13 +400,21 @@ export default function InvoicesPage() {
                 }
                 
                 .signatory-footer {
-                  text-align: right;
-                  margin: 15px 0 80px 0 ;
+                  display: flex;
+                  justify-content: space-between;
+                  margin: 15px 0 80px 0;
                 }
                 
                 .signatory-right {
                   font-size: 14px;
                   color: #000;
+                  text-align: right;
+                }
+                
+                .signature-image {
+                  max-width: 100%;
+                  height: auto;
+                  margin-top: 8px;
                 }
                 
                 .signature-row {
@@ -423,7 +446,7 @@ export default function InvoicesPage() {
             <body>
               <div class="invoice-template">
                 <div class="logo-section">
-                  ${logoBase64 ? `<img src="${logoBase64}" alt="Company Logo" class="logo" />` : '<div class="logo">ESSAR TRAVELS</div>'}
+                  ${logoBase64 ? `<img src="${logoBase64}" alt="Company Logo" class="logo" />` : `<h2>${companyName}</h2>`}
                 </div>
 
                 <div class="separator-line"></div>
@@ -503,35 +526,43 @@ export default function InvoicesPage() {
                 <div class="separator-line"></div>
 
                 <div class="contact-section">
+                  ${contactDetails ? `
                   <div class="contact-title">Contact Details</div>
                   <div class="contact-info">
-                    <div>A. Samsudheen</div>
-                    <div>+91 9043938600</div>
-                    <div>essartravelhub@gmail.com</div>
+                    ${contactDetails.split('\n').map((line: string) => `<div>${line}</div>`).join('')}
                   </div>
+                  ` : ''}
                 </div>
 
                 <div class="bottom-section">
                   <div class="separator-line"></div>
                   <div class="thanks-message">
-                    THANKS FOR DOING BUSINESS WITH US
+                    ${thankYouNote}
                   </div>
                   <div class="separator-line"></div>
                   
                   <div class="signatory-footer">
-                    <div class="signatory-right">For ESSAR Travel Hub</div>
+                    <div></div>
+                    <div style="text-align: right;">
+                      <div class="signatory-right">For ${companyName}</div>
+                      ${sealPhotoBase64 ? `<img src="${sealPhotoBase64}" alt="Authorised Signature" class="signature-image" />` : '<div style="height: 60px; margin-top: 8px;"></div>'}
+                    </div>
                   </div>
                   
 
                   <div class="signature-row">
                     <div class="signature-label">Customer Signature</div>
-                    <div class="signature-label">Authorised Signature</div>
+                    <div style="text-align: right;">
+                      <div class="signature-label">Authorised Signature</div>
+                    </div>
                   </div>
                   
+                  ${companyAddress ? `
                   <div class="separator-line"></div>
                   <div class="address-footer">
-                    Essar Style Walk and Travel Hub, 1202, B.B. Street, Town Hall, Coimbatore, Tamil Nadu. India. Pin-641001.
+                    ${companyAddress}
                   </div>
+                  ` : ''}
                 </div>
               </div>
             </body>

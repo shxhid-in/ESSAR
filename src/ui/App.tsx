@@ -7,6 +7,7 @@ import CustomersPage from './components/pages/Customers';
 import IncentivesPage from './components/pages/Incentives';
 import ReportsPage from './components/pages/Reports';
 import SettingsPage from './components/pages/Settings';
+import ImportExportModal from './components/ImportExportModal';
 import './App.css';
 
 // Create a client (outside component to avoid re-render recreations)
@@ -32,6 +33,7 @@ export default function App() {
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('invoices');
+  const [showImportExportModal, setShowImportExportModal] = useState(false);
   
   useEffect(() => {
     // Listen for navigation from native menu
@@ -41,6 +43,18 @@ function AppContent() {
     
     if ((window.electronAPI as any)?.onNavigate) {
       (window.electronAPI as any).onNavigate(handleNavigate);
+    }
+    
+    // Listen for import/export modal
+    const handleOpenImportExportModal = () => {
+      setShowImportExportModal(true);
+    };
+    
+    if ((window.electronAPI as any)?.onOpenImportExportModal) {
+      const unsubscribe = (window.electronAPI as any).onOpenImportExportModal(handleOpenImportExportModal);
+      return () => {
+        if (unsubscribe) unsubscribe();
+      };
     }
     
     return () => {
@@ -55,6 +69,10 @@ function AppContent() {
       {activeTab === 'incentives' && <IncentivesPage />}
       {activeTab === 'reports' && <ReportsPage />}
       {activeTab === 'settings' && <SettingsPage />}
+      
+      {showImportExportModal && (
+        <ImportExportModal onClose={() => setShowImportExportModal(false)} />
+      )}
     </main>
   );
 }

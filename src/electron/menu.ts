@@ -32,8 +32,17 @@ export function createMenu(mainWindow: BrowserWindow) {
         type: 'submenu',
         submenu: [
           {
-            label: 'Quit',
-            click: app.quit,
+            label: 'Import/Export',
+            click: () => {
+              mainWindow.webContents.send('open-import-export-modal');
+            }
+          },
+          {
+            label: 'Settings',
+            click: () => { mainWindow.webContents.send('navigate', 'settings'); }
+          },
+          {
+            type: 'separator'
           },
           {
             label: 'DevTools',
@@ -41,8 +50,8 @@ export function createMenu(mainWindow: BrowserWindow) {
             visible: isDev(),
           },
           {
-           label: 'Settings',
-           click: () => { mainWindow.webContents.send('navigate', 'settings'); }
+            label: 'Quit',
+            click: app.quit,
           }
         ],
       }

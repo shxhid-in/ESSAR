@@ -169,10 +169,13 @@ function initializeTables() {
       tax_rate REAL DEFAULT 0,
       invoice_prefix TEXT DEFAULT '',
       base_currency TEXT DEFAULT 'INR',
-      company_name TEXT DEFAULT 'Essar Travel Hub',
+      company_name TEXT,
+      company_contact_details TEXT,
       company_address TEXT,
-      company_phone TEXT,
-      company_email TEXT
+      thank_you_note TEXT,
+      primary_logo_path TEXT,
+      secondary_logo_path TEXT,
+      seal_photo_path TEXT
     );
 
     CREATE TABLE IF NOT EXISTS invoice_sequence (
@@ -244,6 +247,57 @@ function migrateDatabase() {
     if (!hasRefNo) {
       // Adding ref_no column to invoices table
       db.exec("ALTER TABLE invoices ADD COLUMN ref_no TEXT");
+    }
+    
+    // Add company details columns to app_settings table if they don't exist
+    const settingsInfo = db.prepare("PRAGMA table_info(app_settings)").all() as Array<{ name: string }>;
+    const hasCompanyContactDetails = settingsInfo.some((col: any) => col.name === 'company_contact_details');
+    const hasPrimaryLogoPath = settingsInfo.some((col: any) => col.name === 'primary_logo_path');
+    const hasSecondaryLogoPath = settingsInfo.some((col: any) => col.name === 'secondary_logo_path');
+    
+    if (!hasCompanyContactDetails) {
+      // Migrate old company fields to new single contact_details field
+      const oldSettings = db.prepare("SELECT company_name, company_address, company_phone, company_email FROM app_settings WHERE id = 1").get() as any;
+      let contactDetails = '';
+      if (oldSettings) {
+        const parts = [];
+        if (oldSettings.company_name) parts.push(oldSettings.company_name);
+        if (oldSettings.company_phone) parts.push(oldSettings.company_phone);
+        if (oldSettings.company_email) parts.push(oldSettings.company_email);
+        if (oldSettings.company_address) parts.push(oldSettings.company_address);
+        contactDetails = parts.join('\n');
+      }
+      
+      db.exec("ALTER TABLE app_settings ADD COLUMN company_contact_details TEXT");
+      if (contactDetails) {
+        db.prepare("UPDATE app_settings SET company_contact_details = ? WHERE id = 1").run(contactDetails);
+      }
+    }
+    
+    if (!hasPrimaryLogoPath) {
+      db.exec("ALTER TABLE app_settings ADD COLUMN primary_logo_path TEXT");
+    }
+    
+    if (!hasSecondaryLogoPath) {
+      db.exec("ALTER TABLE app_settings ADD COLUMN secondary_logo_path TEXT");
+    }
+    
+    // Add company_address column if it doesn't exist
+    const hasCompanyAddress = settingsInfo.some((col: any) => col.name === 'company_address');
+    if (!hasCompanyAddress) {
+      db.exec("ALTER TABLE app_settings ADD COLUMN company_address TEXT");
+    }
+    
+    // Add thank_you_note column if it doesn't exist
+    const hasThankYouNote = settingsInfo.some((col: any) => col.name === 'thank_you_note');
+    if (!hasThankYouNote) {
+      db.exec("ALTER TABLE app_settings ADD COLUMN thank_you_note TEXT");
+    }
+    
+    // Add seal_photo_path column to app_settings table if it doesn't exist
+    const hasSealPhotoPath = settingsInfo.some((col: any) => col.name === 'seal_photo_path');
+    if (!hasSealPhotoPath) {
+      db.exec("ALTER TABLE app_settings ADD COLUMN seal_photo_path TEXT");
     }
     
     // Migrate existing invoices: Remove INV prefix from invoice numbers
@@ -936,11 +990,18 @@ export function getBaseCurrencySymbol(): string {
 
 export const settingsDB = {
   getSettings: () => {
-    const settings = db.prepare("SELECT * FROM app_settings LIMIT 1").get() as {
+    const settings = db.prepare("SELECT * FROM app_settings WHERE id = 1").get() as {
       default_currency: string;
       tax_rate: number;
       invoice_prefix: string;
       base_currency: string;
+      company_name?: string | null;
+      company_contact_details?: string | null;
+      company_address?: string | null;
+      thank_you_note?: string | null;
+      primary_logo_path?: string | null;
+      secondary_logo_path?: string | null;
+      seal_photo_path?: string | null;
     } | undefined;
     
     // Return default settings if none exist
@@ -949,11 +1010,33 @@ export const settingsDB = {
         default_currency: 'USD',
         tax_rate: 0,
         invoice_prefix: '',
-        base_currency: 'INR'
+        base_currency: 'INR',
+        company_name: '',
+        company_contact_details: '',
+        company_address: '',
+        thank_you_note: 'THANKS FOR DOING BUSINESS WITH US',
+        primary_logo_path: '',
+        secondary_logo_path: '',
+        seal_photo_path: ''
       };
     }
     
-    return settings;
+    // Return settings - handle null values but preserve empty strings
+    const result = {
+      default_currency: settings.default_currency ?? 'USD',
+      tax_rate: settings.tax_rate ?? 0,
+      invoice_prefix: settings.invoice_prefix ?? '',
+      base_currency: settings.base_currency ?? 'INR',
+      company_name: (settings.company_name === null || settings.company_name === undefined) ? '' : settings.company_name,
+      company_contact_details: (settings.company_contact_details === null || settings.company_contact_details === undefined) ? '' : settings.company_contact_details,
+      company_address: (settings.company_address === null || settings.company_address === undefined) ? '' : settings.company_address,
+      thank_you_note: (settings.thank_you_note === null || settings.thank_you_note === undefined) ? 'THANKS FOR DOING BUSINESS WITH US' : settings.thank_you_note,
+      primary_logo_path: (settings.primary_logo_path === null || settings.primary_logo_path === undefined) ? '' : settings.primary_logo_path,
+      secondary_logo_path: (settings.secondary_logo_path === null || settings.secondary_logo_path === undefined) ? '' : settings.secondary_logo_path,
+      seal_photo_path: (settings.seal_photo_path === null || settings.seal_photo_path === undefined) ? '' : settings.seal_photo_path
+    };
+    
+    return result;
   },
   
   updateSettings: (settings: {
@@ -961,14 +1044,112 @@ export const settingsDB = {
     tax_rate?: number;
     invoice_prefix?: string;
     base_currency?: string;
+    company_name?: string;
+    company_contact_details?: string;
+    company_address?: string;
+    thank_you_note?: string;
+    primary_logo_path?: string;
+    secondary_logo_path?: string;
+    seal_photo_path?: string;
   }) => {
-    const current = settingsDB.getSettings();
-    const merged = { ...current, ...settings };
-    db.prepare(`
-      INSERT OR REPLACE INTO app_settings 
-      (id, default_currency, tax_rate, invoice_prefix, base_currency)
-      VALUES (1, ?, ?, ?, ?)
-    `).run(merged.default_currency, merged.tax_rate, merged.invoice_prefix, merged.base_currency);
+    try {
+      const current = settingsDB.getSettings();
+      
+      // Merge settings - use settings values if provided, otherwise keep current values
+      // This ensures we preserve all existing settings while updating only what's provided
+      const merged = { 
+        default_currency: settings.default_currency !== undefined ? settings.default_currency : current.default_currency,
+        tax_rate: settings.tax_rate !== undefined ? settings.tax_rate : current.tax_rate,
+        invoice_prefix: settings.invoice_prefix !== undefined ? settings.invoice_prefix : current.invoice_prefix,
+        base_currency: settings.base_currency !== undefined ? settings.base_currency : current.base_currency,
+        company_name: settings.company_name !== undefined ? settings.company_name : current.company_name,
+        company_contact_details: settings.company_contact_details !== undefined ? settings.company_contact_details : current.company_contact_details,
+        company_address: settings.company_address !== undefined ? settings.company_address : current.company_address,
+        thank_you_note: settings.thank_you_note !== undefined ? settings.thank_you_note : current.thank_you_note,
+        primary_logo_path: settings.primary_logo_path !== undefined ? settings.primary_logo_path : current.primary_logo_path,
+        secondary_logo_path: settings.secondary_logo_path !== undefined ? settings.secondary_logo_path : current.secondary_logo_path,
+        seal_photo_path: settings.seal_photo_path !== undefined ? settings.seal_photo_path : current.seal_photo_path
+      };
+      
+      // Check if settings row exists
+      const existing = db.prepare("SELECT id FROM app_settings WHERE id = 1").get();
+      
+      // Prepare values - convert to strings and use defaults only for null/undefined
+      const values = [
+        merged.default_currency || 'USD', 
+        merged.tax_rate ?? 0, 
+        merged.invoice_prefix || '', 
+        merged.base_currency || 'INR',
+        merged.company_name !== null && merged.company_name !== undefined ? String(merged.company_name) : '',
+        merged.company_contact_details !== null && merged.company_contact_details !== undefined ? String(merged.company_contact_details) : '',
+        merged.company_address !== null && merged.company_address !== undefined ? String(merged.company_address) : '',
+        merged.thank_you_note !== null && merged.thank_you_note !== undefined ? String(merged.thank_you_note) : 'THANKS FOR DOING BUSINESS WITH US',
+        merged.primary_logo_path || '',
+        merged.secondary_logo_path || '',
+        merged.seal_photo_path || ''
+      ];
+      
+      let result;
+      if (existing) {
+        // Update existing row - use explicit parameter binding
+        const updateStmt = db.prepare(`
+          UPDATE app_settings SET
+            default_currency = ?,
+            tax_rate = ?,
+            invoice_prefix = ?,
+            base_currency = ?,
+            company_name = ?,
+            company_contact_details = ?,
+            company_address = ?,
+            thank_you_note = ?,
+            primary_logo_path = ?,
+            secondary_logo_path = ?,
+            seal_photo_path = ?
+          WHERE id = 1
+        `);
+        
+        // Execute with explicit values to ensure proper binding
+        result = updateStmt.run(
+          values[0], // default_currency
+          values[1], // tax_rate
+          values[2], // invoice_prefix
+          values[3], // base_currency
+          values[4], // company_name
+          values[5], // company_contact_details
+          values[6], // company_address
+          values[7], // thank_you_note
+          values[8], // primary_logo_path
+          values[9], // secondary_logo_path
+          values[10] // seal_photo_path
+        );
+      } else {
+        // Insert new row
+        const insertStmt = db.prepare(`
+          INSERT INTO app_settings 
+          (id, default_currency, tax_rate, invoice_prefix, base_currency, company_name, company_contact_details, company_address, thank_you_note, primary_logo_path, secondary_logo_path, seal_photo_path)
+          VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        result = insertStmt.run(
+          values[0], // default_currency
+          values[1], // tax_rate
+          values[2], // invoice_prefix
+          values[3], // base_currency
+          values[4], // company_name
+          values[5], // company_contact_details
+          values[6], // company_address
+          values[7], // thank_you_note
+          values[8], // primary_logo_path
+          values[9], // secondary_logo_path
+          values[10] // seal_photo_path
+        );
+      }
+      
+      // Return the updated settings
+      return settingsDB.getSettings();
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      throw error;
+    }
   }
 };
 

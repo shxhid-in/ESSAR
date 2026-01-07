@@ -4,6 +4,8 @@ import { createTray } from './tray.js';
 import { ipcMainHandle, ipcMainOn, isDev } from './util.js';
 import { getPreloadPath, getUIPath, getAssetPath } from './pathResolver.js';
 import { Invoice, database, customerDB, reportDB, settingsDB, db, Currency, Service, createInvoice, updateInvoice, getAllInvoices, getInvoicesByCustomer, getInvoiceById, deleteInvoice, addService, updateService, deleteService, addCurrency, updateCurrency, deleteCurrency, addOrUpdateInvoicePayment, getInvoicePaymentData, createIncentive, getAllIncentives, getIncentiveById, updateIncentive, deleteIncentive } from './database.js';
+import { exportInvoicesToExcel, exportCustomersToExcel, exportAllToSingleExcel, importFromExcel, ExportOptions } from './excelUtils.js';
+import { dialog } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -155,7 +157,8 @@ ipcMainHandle('get-logo-base64', async () => {
 ipcMainHandle('print-invoice', async (payload) => {
   const win = new BrowserWindow({ show: false });
   
-  await win.loadURL(`data:text/html,${generateHTML(payload.invoice)}`);
+  const htmlContent = await generateHTML(payload.invoice);
+  await win.loadURL(`data:text/html,${htmlContent}`);
   
   win.webContents.on('did-finish-load', () => {
     win.webContents.print({
@@ -269,9 +272,10 @@ ipcMainHandle('get-customer-stats', () =>
 
 ipcMainHandle('get-settings', () => settingsDB.getSettings());
 
-ipcMainHandle('update-settings', (payload) => 
-  settingsDB.updateSettings(payload.settings)
-);
+ipcMainHandle('update-settings', (payload) => {
+  const result = settingsDB.updateSettings(payload.settings);
+  return result;
+});
 
 ipcMainHandle('get-currencies', () => 
   database.getCurrencies()
@@ -326,6 +330,347 @@ ipcMainHandle('delete-incentive', async (payload) => {
   return deleteIncentive(payload.id);
 });
 
+// Excel Import/Export IPC Handlers
+ipcMainHandle('export-data', async (payload) => {
+  const { options } = payload;
+  
+  if (options.exportFormat === 'single') {
+    return exportAllToSingleExcel(options);
+  } else {
+    // Export separately
+    const invoiceResult = exportInvoicesToExcel(options);
+    const customerResult = exportCustomersToExcel();
+    
+    const messages: string[] = [];
+    const errors: string[] = [];
+    
+    if (invoiceResult.success && invoiceResult.message) {
+      messages.push(invoiceResult.message);
+    } else if (invoiceResult.error && invoiceResult.error !== 'No invoices found for the selected criteria') {
+      errors.push(`Invoices: ${invoiceResult.error}`);
+    }
+    
+    if (customerResult.success && customerResult.message) {
+      messages.push(customerResult.message);
+    } else if (customerResult.error && customerResult.error !== 'No customers found') {
+      errors.push(`Customers: ${customerResult.error}`);
+    }
+    
+    const downloadsPath = path.join(app.getPath('home'), 'Downloads');
+    
+    // If we have at least one successful export, consider it a success
+    const hasSuccess = invoiceResult.success || customerResult.success;
+    
+    let finalMessage = '';
+    if (messages.length > 0) {
+      finalMessage = messages.join('\n') + `\n\nFiles saved to: ${downloadsPath}`;
+    }
+    if (errors.length > 0) {
+      finalMessage += (finalMessage ? '\n\n' : '') + 'Errors:\n' + errors.join('\n');
+    }
+    if (!finalMessage) {
+      finalMessage = 'No data found to export';
+    }
+    
+    return {
+      success: hasSuccess,
+      filePaths: [
+        invoiceResult.filePath,
+        customerResult.filePath
+      ].filter(Boolean),
+      message: finalMessage,
+      error: hasSuccess ? undefined : (invoiceResult.error || customerResult.error || 'No data to export')
+    };
+  }
+});
+
+ipcMainHandle('import-data', async (payload: { filePath?: string; filePaths?: string[] }) => {
+  try {
+    // Support both single file and multiple files
+    const filePaths = payload.filePaths || (payload.filePath ? [payload.filePath] : []);
+    
+    if (filePaths.length === 0) {
+      return {
+        success: false,
+        importedInvoices: 0,
+        importedCustomers: 0,
+        errors: ['No files selected'],
+        message: 'Import failed: No files selected'
+      };
+    }
+    
+    // Process all files and combine results
+    let totalImportedInvoices = 0;
+    let totalImportedCustomers = 0;
+    const allErrors: string[] = [];
+    let hasSuccess = false;
+    
+    for (const filePath of filePaths) {
+      try {
+        const result = importFromExcel(filePath);
+        if (result.success) {
+          hasSuccess = true;
+          totalImportedInvoices += result.importedInvoices;
+          totalImportedCustomers += result.importedCustomers;
+        }
+        if (result.errors && result.errors.length > 0) {
+          allErrors.push(...result.errors);
+        }
+      } catch (error) {
+        allErrors.push(`Error processing file ${path.basename(filePath)}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    }
+    
+    return {
+      success: hasSuccess,
+      importedInvoices: totalImportedInvoices,
+      importedCustomers: totalImportedCustomers,
+      errors: allErrors,
+      message: `Imported ${totalImportedInvoices} invoices and ${totalImportedCustomers} customers from ${filePaths.length} file(s)`
+    };
+  } catch (error) {
+    return {
+      success: false,
+      importedInvoices: 0,
+      importedCustomers: 0,
+      errors: [error instanceof Error ? error.message : 'Unknown error'],
+      message: 'Import failed'
+    };
+  }
+});
+
+ipcMainHandle('select-import-file', async () => {
+  const result = await dialog.showOpenDialog({
+    title: 'Select Excel file(s) to import',
+    filters: [
+      { name: 'Excel Files', extensions: ['xlsx', 'xls'] },
+      { name: 'All Files', extensions: ['*'] }
+    ],
+    properties: ['openFile', 'multiSelections']
+  });
+  
+  if (result.canceled) {
+    return { canceled: true, filePaths: [] };
+  }
+  
+  return { canceled: false, filePaths: result.filePaths };
+});
+
+// Logo Upload IPC Handlers
+ipcMainHandle('upload-logo', async (payload: { logoType: 'primary' | 'secondary', filePath: string }) => {
+  try {
+    const { logoType, filePath } = payload;
+    
+    // Validate file exists
+    if (!fs.existsSync(filePath)) {
+      return { success: false, error: 'File not found' };
+    }
+    
+    // Get file info
+    const stats = fs.statSync(filePath);
+    const fileSizeInMB = stats.size / (1024 * 1024);
+    
+    // Validate file size (500KB for primary, 200KB for secondary)
+    const maxSize = logoType === 'primary' ? 0.5 : 0.2;
+    if (fileSizeInMB > maxSize) {
+      return { 
+        success: false, 
+        error: `File size exceeds ${maxSize}MB limit. Current size: ${fileSizeInMB.toFixed(2)}MB` 
+      };
+    }
+    
+    // Validate image dimensions (optional - we'll do basic validation)
+    // For now, we'll just check file extension
+    const ext = path.extname(filePath).toLowerCase();
+    if (!['.png', '.jpg', '.jpeg', '.svg'].includes(ext)) {
+      return { success: false, error: 'Invalid file format. Please use PNG, JPG, or SVG' };
+    }
+    
+    // Create logos directory in assets if it doesn't exist
+    const assetPath = getAssetPath();
+    const logosDir = path.join(assetPath, 'logos');
+    if (!fs.existsSync(logosDir)) {
+      fs.mkdirSync(logosDir, { recursive: true });
+    }
+    
+    // Copy file to assets/logos directory
+    const fileName = `${logoType}-logo${ext}`;
+    const destPath = path.join(logosDir, fileName);
+    
+    fs.copyFileSync(filePath, destPath);
+    
+    // Update settings with logo path
+    const settings = settingsDB.getSettings();
+    const logoPathKey = logoType === 'primary' ? 'primary_logo_path' : 'secondary_logo_path';
+    settingsDB.updateSettings({
+      ...settings,
+      [logoPathKey]: destPath
+    });
+    
+    return { success: true, filePath: destPath };
+  } catch (error) {
+    console.error('Logo upload error:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+});
+
+ipcMainHandle('select-logo-file', async (payload: { logoType: 'primary' | 'secondary' }) => {
+  const result = await dialog.showOpenDialog({
+    title: `Select ${payload.logoType === 'primary' ? 'Primary' : 'Secondary'} Logo`,
+    filters: [
+      { name: 'Image Files', extensions: ['png', 'jpg', 'jpeg', 'svg'] },
+      { name: 'All Files', extensions: ['*'] }
+    ],
+    properties: ['openFile']
+  });
+  
+  if (result.canceled) {
+    return { canceled: true, filePath: null };
+  }
+  
+  return { canceled: false, filePath: result.filePaths[0] };
+});
+
+ipcMainHandle('select-seal-photo-file', async () => {
+  const result = await dialog.showOpenDialog({
+    title: 'Select Seal Photo',
+    filters: [
+      { name: 'Image Files', extensions: ['png', 'jpg', 'jpeg', 'svg'] },
+      { name: 'All Files', extensions: ['*'] }
+    ],
+    properties: ['openFile']
+  });
+  
+  if (result.canceled) {
+    return { canceled: true, filePath: null };
+  }
+  
+  return { canceled: false, filePath: result.filePaths[0] };
+});
+
+ipcMainHandle('get-primary-logo-base64', async () => {
+  try {
+    const settings = settingsDB.getSettings();
+    if (!settings.primary_logo_path || !fs.existsSync(settings.primary_logo_path)) {
+      return '';
+    }
+    
+    const ext = path.extname(settings.primary_logo_path).toLowerCase();
+    const imageBuffer = fs.readFileSync(settings.primary_logo_path);
+    const base64 = imageBuffer.toString('base64');
+    
+    if (ext === '.svg') {
+      return `data:image/svg+xml;base64,${base64}`;
+    } else {
+      const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+      return `data:${mimeType};base64,${base64}`;
+    }
+  } catch (error) {
+    console.error('Error loading primary logo:', error);
+    return '';
+  }
+});
+
+ipcMainHandle('get-secondary-logo-base64', async () => {
+  try {
+    const settings = settingsDB.getSettings();
+    if (!settings.secondary_logo_path || !fs.existsSync(settings.secondary_logo_path)) {
+      return '';
+    }
+    
+    const ext = path.extname(settings.secondary_logo_path).toLowerCase();
+    const imageBuffer = fs.readFileSync(settings.secondary_logo_path);
+    const base64 = imageBuffer.toString('base64');
+    
+    if (ext === '.svg') {
+      return `data:image/svg+xml;base64,${base64}`;
+    } else {
+      const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+      return `data:${mimeType};base64,${base64}`;
+    }
+  } catch (error) {
+    console.error('Error loading secondary logo:', error);
+    return '';
+  }
+});
+
+ipcMainHandle('upload-seal-photo', async (payload: { filePath: string }) => {
+  try {
+    const { filePath } = payload;
+    
+    // Validate file exists
+    if (!fs.existsSync(filePath)) {
+      return { success: false, error: 'File not found' };
+    }
+    
+    // Get file info
+    const stats = fs.statSync(filePath);
+    const fileSizeInMB = stats.size / (1024 * 1024);
+    
+    // Validate file size (500KB for seal photo)
+    const maxSize = 0.5;
+    if (fileSizeInMB > maxSize) {
+      return { 
+        success: false, 
+        error: `File size exceeds ${maxSize}MB limit. Current size: ${fileSizeInMB.toFixed(2)}MB` 
+      };
+    }
+    
+    // Get file extension
+    const ext = path.extname(filePath).toLowerCase();
+    const allowedExtensions = ['.png', '.jpg', '.jpeg', '.svg'];
+    if (!allowedExtensions.includes(ext)) {
+      return { success: false, error: 'Invalid file type. Allowed: PNG, JPG, JPEG, SVG' };
+    }
+    
+    // Create logos directory if it doesn't exist
+    const assetPath = getAssetPath();
+    const logosDir = path.join(assetPath, 'logos');
+    if (!fs.existsSync(logosDir)) {
+      fs.mkdirSync(logosDir, { recursive: true });
+    }
+    
+    // Copy file to logos directory
+    const fileName = `seal-photo${ext}`;
+    const destPath = path.join(logosDir, fileName);
+    fs.copyFileSync(filePath, destPath);
+    
+    // Update settings with new logo path
+    settingsDB.updateSettings({ seal_photo_path: destPath });
+    
+    return { success: true, filePath: destPath };
+  } catch (error) {
+    console.error('Error uploading seal photo:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+});
+
+ipcMainHandle('get-seal-photo-base64', async () => {
+  try {
+    const settings = settingsDB.getSettings();
+    if (!settings.seal_photo_path || !fs.existsSync(settings.seal_photo_path)) {
+      return '';
+    }
+    
+    const ext = path.extname(settings.seal_photo_path).toLowerCase();
+    const imageBuffer = fs.readFileSync(settings.seal_photo_path);
+    const base64 = imageBuffer.toString('base64');
+    
+    if (ext === '.svg') {
+      return `data:image/svg+xml;base64,${base64}`;
+    } else {
+      const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+      return `data:${mimeType};base64,${base64}`;
+    }
+  } catch (error) {
+    console.error('Error loading seal photo:', error);
+    return '';
+  }
+});
+
 // Navigation Handler
 ipcMainOn('navigate', (payload) => {
   mainWindow.webContents.send('navigate', payload.tab);
@@ -377,7 +722,30 @@ function getSignatureAsBase64(): string {
   }
 }
 
-// Function to get PNG logo as base64
+async function getSealPhotoAsBase64(): Promise<string> {
+  try {
+    const settings = settingsDB.getSettings();
+    if (settings.seal_photo_path && fs.existsSync(settings.seal_photo_path)) {
+      const ext = path.extname(settings.seal_photo_path).toLowerCase();
+      const imageBuffer = fs.readFileSync(settings.seal_photo_path);
+      const base64 = imageBuffer.toString('base64');
+      
+      if (ext === '.svg') {
+        return `data:image/svg+xml;base64,${base64}`;
+      } else {
+        const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+        return `data:${mimeType};base64,${base64}`;
+      }
+    }
+    // Return empty string if seal photo is not available (no fallback)
+    return '';
+  } catch (error) {
+    console.error('Error loading seal photo:', error);
+    return '';
+  }
+}
+
+// Function to get PNG logo as base64 (legacy - kept for backward compatibility)
 function getPNGLogoAsBase64(): string {
   try {
     const assetPath = getAssetPath();
@@ -400,7 +768,40 @@ function getPNGLogoAsBase64(): string {
   }
 }
 
-function generateHTML(invoice: Invoice): string {
+// Function to get primary logo as base64
+async function getPrimaryLogoAsBase64(): Promise<string> {
+  try {
+    const settings = settingsDB.getSettings();
+    if (!settings.primary_logo_path || !fs.existsSync(settings.primary_logo_path)) {
+      return '';
+    }
+    
+    const ext = path.extname(settings.primary_logo_path).toLowerCase();
+    const imageBuffer = fs.readFileSync(settings.primary_logo_path);
+    const base64 = imageBuffer.toString('base64');
+    
+    if (ext === '.svg') {
+      return `data:image/svg+xml;base64,${base64}`;
+    } else {
+      const mimeType = ext === '.png' ? 'image/png' : 'image/jpeg';
+      return `data:${mimeType};base64,${base64}`;
+    }
+  } catch (error) {
+    console.error('Error loading primary logo:', error);
+    return '';
+  }
+}
+
+async function generateHTML(invoice: Invoice): Promise<string> {
+  // Get company details and logo
+  const settings = settingsDB.getSettings();
+  const companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+  const contactDetails = settings.company_contact_details || '';
+  const companyAddress = settings.company_address || '';
+  const thankYouNote = settings.thank_you_note || 'THANKS FOR DOING BUSINESS WITH US';
+  const primaryLogoBase64 = await getPrimaryLogoAsBase64();
+  const sealPhotoBase64 = await getSealPhotoAsBase64();
+  
   // URL encode the HTML content
   return encodeURIComponent(`<!DOCTYPE html>
     <html>
@@ -590,8 +991,7 @@ function generateHTML(invoice: Invoice): string {
           color: #666;
         }
         .signature-image {
-          max-width: 150px;
-          max-height: 80px;
+          max-width: 100%;
           height: auto;
           object-fit: contain;
           margin: 5px 0;
@@ -608,7 +1008,7 @@ function generateHTML(invoice: Invoice): string {
     <body>
       <div class="invoice-container">
         <div class="logo-section">
-          <h2>ESSAR TRAVEL HUB</h2>
+          ${primaryLogoBase64 ? `<img src="${primaryLogoBase64}" alt="Company Logo" class="logo" />` : `<h2>${companyName}</h2>`}
         </div>
         
         <div class="separator-line"></div>
@@ -688,30 +1088,26 @@ function generateHTML(invoice: Invoice): string {
         <div class="separator-line"></div>
         
         <div class="contact-section">
+          ${contactDetails ? `
           <div class="contact-title">Contact Details</div>
           <div class="contact-info">
-            <div>Samsudheen A</div>
-            <div>+91 9043738600</div>
-            <div>+971 559915534</div>
-            <div>essartravelhub@gmail.com</div>
+            ${contactDetails.split('\n').map((line: string) => `<div>${line}</div>`).join('')}
           </div>
+          ` : ''}
         </div>
         
         <div class="bottom-section">
           <div class="separator-line"></div>
           <div class="thanks-message">
-            THANKS FOR DOING BUSINESS WITH US
+            ${thankYouNote}
           </div>
           <div class="separator-line"></div>
           
           <div class="signatory-footer">
             <div></div>
             <div style="text-align: right;">
-              <div class="signatory-right">For ESSAR Travel Hub</div>
-              ${(() => {
-                const signatureBase64 = getSignatureAsBase64();
-                return signatureBase64 ? `<img src="${signatureBase64}" alt="Authorised Signature" class="signature-image" />` : '';
-              })()}
+              <div class="signatory-right">For ${companyName}</div>
+              ${sealPhotoBase64 ? `<img src="${sealPhotoBase64}" alt="Authorised Signature" class="signature-image" />` : '<div style="height: 60px;"></div>'}
             </div>
           </div>
           
@@ -722,10 +1118,12 @@ function generateHTML(invoice: Invoice): string {
             </div>
           </div>
           
+          ${companyAddress ? `
           <div class="separator-line"></div>
+            ${companyAddress}
           <div class="address-footer">
-            Essar Style Walk and Travel Hub, 1202, B.B. Street, Town Hall, Coimbatore, Tamil Nadu. India. Pin-641001.
           </div>
+          ` : ''}
         </div>
       </div>
     </body>
