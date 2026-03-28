@@ -12,7 +12,7 @@ export default function IncentiveAnalytics() {
   const { data: allIncentives, isLoading: incentivesLoading } = useQuery(
     ['incentives-analytics'],
     async () => {
-      return await window.electronAPI.getIncentives();
+      return await (window.electronAPI as any).getIncentives();
     }
   );
 
@@ -30,7 +30,7 @@ export default function IncentiveAnalytics() {
   };
 
   // Filter incentives based on date range and category
-  const filteredIncentives = allIncentives?.filter(incentive => {
+  const filteredIncentives = allIncentives?.filter((incentive: any) => {
     const incentiveDate = new Date(incentive.date).toISOString().split('T')[0];
     const dateMatch = incentiveDate >= dateRange.start && incentiveDate <= dateRange.end;
     const categoryMatch = selectedCategory === 'all' || incentive.category === selectedCategory;
@@ -38,12 +38,12 @@ export default function IncentiveAnalytics() {
   }) || [];
 
   // Calculate statistics
-  const totalAmount = filteredIncentives.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+  const totalAmount = filteredIncentives.reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0);
   const totalCount = filteredIncentives.length;
   const avgAmount = totalCount > 0 ? totalAmount / totalCount : 0;
 
   // Group by category
-  const categoryStats = filteredIncentives.reduce((acc, inv) => {
+  const categoryStats = filteredIncentives.reduce((acc: Record<string, { count: number; total: number }>, inv: any) => {
     const cat = inv.category || 'Other';
     if (!acc[cat]) {
       acc[cat] = { count: 0, total: 0 };
@@ -54,7 +54,7 @@ export default function IncentiveAnalytics() {
   }, {} as Record<string, { count: number; total: number }>);
 
   // Group by month
-  const monthlyStats = filteredIncentives.reduce((acc, inv) => {
+  const monthlyStats = filteredIncentives.reduce((acc: Record<string, { count: number; total: number }>, inv: any) => {
     const date = new Date(inv.date);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     if (!acc[monthKey]) {
@@ -65,7 +65,7 @@ export default function IncentiveAnalytics() {
     return acc;
   }, {} as Record<string, { count: number; total: number }>);
 
-  const categories = ['all', ...Array.from(new Set(allIncentives?.map(inv => inv.category || 'Other') || []))];
+  const categories = ['all', ...Array.from(new Set(allIncentives?.map((inv: any) => inv.category || 'Other') || []))] as string[];
 
   if (incentivesLoading) {
     return (
@@ -189,7 +189,7 @@ export default function IncentiveAnalytics() {
           <div className="empty-state">No incentives found for the selected filters</div>
         ) : (
           <div className="category-breakdown">
-            {Object.entries(categoryStats)
+            {(Object.entries(categoryStats) as [string, { count: number; total: number }][])
               .sort((a, b) => b[1].total - a[1].total)
               .map(([category, stats]) => (
                 <div key={category} className="category-item">
@@ -211,7 +211,7 @@ export default function IncentiveAnalytics() {
           <div className="empty-state">No monthly data available</div>
         ) : (
           <div className="monthly-breakdown">
-            {Object.entries(monthlyStats)
+            {(Object.entries(monthlyStats) as [string, { count: number; total: number }][])
               .sort((a, b) => a[0].localeCompare(b[0]))
               .map(([month, stats]) => {
                 const [year, monthNum] = month.split('-');

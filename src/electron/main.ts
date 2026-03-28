@@ -876,7 +876,7 @@ async function getPrimaryLogoAsBase64(): Promise<string> {
 async function generateHTML(invoice: Invoice): Promise<string> {
   // Get company details and logo
   const settings = settingsDB.getSettings();
-  const companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+  const companyName = (settings.company_name || '').trim() || 'Company';
   const contactDetails = settings.company_contact_details || '';
   const companyAddress = settings.company_address || '';
   const thankYouNote = settings.thank_you_note || 'THANKS FOR DOING BUSINESS WITH US';

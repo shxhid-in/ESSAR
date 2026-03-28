@@ -88,7 +88,7 @@ export default function InvoicesPage() {
   });
   
   // Create invoice mutation
-  const { mutateAsync: createInvoiceAsync, mutate: createInvoice, isLoading: isCreating } = useMutation(
+  const { mutateAsync: createInvoiceAsync, isLoading: isCreating } = useMutation(
     async (invoiceData: InvoiceDraft) => {
       const result = await window.electronAPI.createInvoice(invoiceData);
       if (!result.success) {
@@ -98,7 +98,6 @@ export default function InvoicesPage() {
     },
     {
       onSuccess: () => {
-        setShowInvoiceCreator(false);
         refetch(); // Refresh the invoice list
       },
       onError: (error: Error) => {
@@ -172,7 +171,7 @@ export default function InvoicesPage() {
     try {
       // Fetch company details and primary logo
       const settings = await (window.electronAPI as any).getSettings();
-      const companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+      const companyName = (settings.company_name || '').trim() || 'Company';
       const contactDetails = settings.company_contact_details || '';
       const companyAddress = settings.company_address || '';
       const thankYouNote = settings.thank_you_note || 'THANKS FOR DOING BUSINESS WITH US';
@@ -237,7 +236,9 @@ export default function InvoicesPage() {
                 }
                 
                 .logo {
-                  max-width: 40%;
+                  max-width: 260px;
+                  max-height: 90px;
+                  width: auto;
                   height: auto;
                   object-fit: contain;
                 }
@@ -412,9 +413,12 @@ export default function InvoicesPage() {
                 }
                 
                 .signature-image {
-                  max-width: 100%;
+                  max-width: 260px;
+                  max-height: 100px;
+                  width: auto;
                   height: auto;
                   margin-top: 8px;
+                  object-fit: contain;
                 }
                 
                 .signature-row {
@@ -431,8 +435,9 @@ export default function InvoicesPage() {
                 
                 .address-footer {
                   text-align: center;
-                  font-size: 12px;
-                  margin-top: 15px;
+                  font-size: 13px;
+                  font-weight: normal;
+                  margin: 8px 0;
                   line-height: 1.4;
                   color: #666;
                 }
@@ -562,6 +567,7 @@ export default function InvoicesPage() {
                   <div class="address-footer">
                     ${companyAddress}
                   </div>
+                  <div class="separator-line"></div>
                   ` : ''}
                 </div>
               </div>
@@ -630,6 +636,8 @@ export default function InvoicesPage() {
     // This allows the InvoiceCreator to know when it succeeds/fails
     try {
       await createInvoiceAsync(transformedData);
+      setShowInvoiceCreator(false);
+      refetch();
     } catch (error) {
       // Error is already handled by mutation's onError, just rethrow so InvoiceCreator knows it failed
       throw error;

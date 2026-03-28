@@ -1,6 +1,6 @@
 {
-  "appId": "com.shahid.essar_travel_billing",
-  "productName": "Essar Travel Billing",
+  "appId": "com.shahid.essar_travels",
+  "productName": "Essar Travel",
   "files": ["dist-electron", "dist-react"],
   "extraResources": ["dist-electron/preload.cjs", "src/assets/**"],
   "icon": "./desktopIcon.png",

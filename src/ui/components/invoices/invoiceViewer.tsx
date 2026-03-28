@@ -10,16 +10,18 @@ interface InvoiceViewerProps {
 const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
   const [logoBase64, setLogoBase64] = useState('');
   const [signatureBase64, setSignatureBase64] = useState('');
-  const [companyName, setCompanyName] = useState('ESSAR TRAVEL HUB');
+  const [companyName, setCompanyName] = useState('');
   const [contactDetails, setContactDetails] = useState('');
+  const [companyAddress, setCompanyAddress] = useState('');
 
   useEffect(() => {
     const loadAssets = async () => {
       try {
         // Load company details and logo from settings
         const settings = await (window.electronAPI as any).getSettings();
-        setCompanyName(settings.company_name || 'ESSAR TRAVEL HUB');
+        setCompanyName((settings.company_name || '').trim());
         setContactDetails(settings.company_contact_details || '');
+        setCompanyAddress(settings.company_address || '');
         
         const logo = await (window.electronAPI as any).getPrimaryLogoBase64();
         
@@ -236,7 +238,7 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
               <div className="signatory-footer-new">
                 <div></div>
                 <div style={{ textAlign: 'right' }}>
-                  <div className="signatory-right-new">For {companyName}</div>
+                  <div className="signatory-right-new">For {companyName || 'Company'}</div>
                   {signatureBase64 ? (
                     <img 
                       src={signatureBase64} 
@@ -255,6 +257,14 @@ const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ invoice, onClose }) => {
                   <div className="signature-label-new">Authorised Signature</div>
                 </div>
               </div>
+
+              {companyAddress && (
+                <>
+                  <div className="separator-line-new"></div>
+                  <div className="address-footer-new">{companyAddress}</div>
+                  <div className="separator-line-new"></div>
+                </>
+              )}
             </div>
           </div>
         </div>

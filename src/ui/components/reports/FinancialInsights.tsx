@@ -169,28 +169,28 @@ export default function FinancialInsights() {
         ) : (
           (() => {
             const invoices = allInvoices || [];
-            const totalBilled = invoices.reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
-            const totalCollected = invoices.reduce((sum, inv) => sum + (inv.amountPaid || 0), 0);
-            const totalOutstanding = invoices.reduce((sum, inv) => sum + (inv.remainingBalance || 0), 0);
+            const totalBilled = invoices.reduce((sum: number, inv: any) => sum + (inv.grandTotal || 0), 0);
+            const totalCollected = invoices.reduce((sum: number, inv: any) => sum + (inv.amountPaid || 0), 0);
+            const totalOutstanding = invoices.reduce((sum: number, inv: any) => sum + (inv.remainingBalance || 0), 0);
             const collectionRate = totalBilled > 0 ? (totalCollected / totalBilled) * 100 : 0;
             
-            const paidCount = invoices.filter(inv => inv.paymentStatus === 'paid').length;
-            const pendingCount = invoices.filter(inv => inv.paymentStatus === 'pending').length;
-            const unpaidCount = invoices.filter(inv => inv.paymentStatus === 'unpaid').length;
+            const paidCount = invoices.filter((inv: any) => inv.paymentStatus === 'paid').length;
+            const pendingCount = invoices.filter((inv: any) => inv.paymentStatus === 'pending').length;
+            const unpaidCount = invoices.filter((inv: any) => inv.paymentStatus === 'unpaid').length;
             
             const paidAmount = invoices
-              .filter(inv => inv.paymentStatus === 'paid')
-              .reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+              .filter((inv: any) => inv.paymentStatus === 'paid')
+              .reduce((sum: number, inv: any) => sum + (inv.grandTotal || 0), 0);
             const pendingAmount = invoices
-              .filter(inv => inv.paymentStatus === 'pending')
-              .reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+              .filter((inv: any) => inv.paymentStatus === 'pending')
+              .reduce((sum: number, inv: any) => sum + (inv.grandTotal || 0), 0);
             const unpaidAmount = invoices
-              .filter(inv => inv.paymentStatus === 'unpaid')
-              .reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
+              .filter((inv: any) => inv.paymentStatus === 'unpaid')
+              .reduce((sum: number, inv: any) => sum + (inv.grandTotal || 0), 0);
 
             // Payment method breakdown
             const paymentMethods: Record<string, number> = {};
-            invoices.forEach(inv => {
+            invoices.forEach((inv: any) => {
               // We'll need to get payment method from payment data
               // For now, we'll use a placeholder
             });

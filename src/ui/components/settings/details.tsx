@@ -15,6 +15,7 @@ interface DetailsProps {
 
 export default function Details({ initialValues = {} }: DetailsProps) {
   const queryClient = useQueryClient();
+  type UploadTarget = 'primary' | 'secondary' | 'seal' | null;
   
   // Fetch settings from database
   const { data: settings, isLoading: isLoadingSettings } = useQuery(
@@ -37,7 +38,7 @@ export default function Details({ initialValues = {} }: DetailsProps) {
   const [primaryLogoBase64, setPrimaryLogoBase64] = useState('');
   const [secondaryLogoBase64, setSecondaryLogoBase64] = useState('');
   const [sealPhotoBase64, setSealPhotoBase64] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingTarget, setUploadingTarget] = useState<UploadTarget>(null);
   const [uploadMessage, setUploadMessage] = useState('');
 
   // Update state when settings data loads
@@ -124,17 +125,18 @@ export default function Details({ initialValues = {} }: DetailsProps) {
           setSealPhotoPath(freshSettings.seal_photo_path || '');
         }
         
-        alert('Company details saved successfully!');
+        setUploadMessage('Company details saved successfully!');
+        setTimeout(() => setUploadMessage(''), 3000);
       },
       onError: (error: any) => {
         console.error('Save error:', error);
-        alert(`Failed to save: ${error.message || 'Unknown error'}`);
+        setUploadMessage(`Save failed: ${error.message || 'Unknown error'}`);
       }
     }
   );
 
   const handleUploadLogo = async (logoType: 'primary' | 'secondary') => {
-    setIsUploading(true);
+    setUploadingTarget(logoType);
     setUploadMessage('');
     
     try {
@@ -142,7 +144,6 @@ export default function Details({ initialValues = {} }: DetailsProps) {
       const fileResult = await (window.electronAPI as any).selectLogoFile(logoType);
       
       if (fileResult.canceled) {
-        setIsUploading(false);
         return;
       }
 
@@ -179,12 +180,12 @@ export default function Details({ initialValues = {} }: DetailsProps) {
     } catch (error) {
       setUploadMessage(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setIsUploading(false);
+      setUploadingTarget(null);
     }
   };
 
   const handleUploadSealPhoto = async () => {
-    setIsUploading(true);
+    setUploadingTarget('seal');
     setUploadMessage('');
     
     try {
@@ -192,7 +193,6 @@ export default function Details({ initialValues = {} }: DetailsProps) {
       const fileResult = await (window.electronAPI as any).selectSealPhotoFile();
       
       if (fileResult.canceled) {
-        setIsUploading(false);
         return;
       }
 
@@ -218,7 +218,39 @@ export default function Details({ initialValues = {} }: DetailsProps) {
     } catch (error) {
       setUploadMessage(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setIsUploading(false);
+      setUploadingTarget(null);
+    }
+  };
+
+  const handleRemoveImage = async (imageType: 'primary' | 'secondary' | 'seal') => {
+    try {
+      const currentSettings = await (window.electronAPI as any).getSettings();
+      const key = imageType === 'primary'
+        ? 'primary_logo_path'
+        : imageType === 'secondary'
+          ? 'secondary_logo_path'
+          : 'seal_photo_path';
+
+      if (imageType === 'primary') {
+        setPrimaryLogoPath('');
+        setPrimaryLogoBase64('');
+      } else if (imageType === 'secondary') {
+        setSecondaryLogoPath('');
+        setSecondaryLogoBase64('');
+      } else {
+        setSealPhotoPath('');
+        setSealPhotoBase64('');
+      }
+
+      updateSettings({
+        ...currentSettings,
+        [key]: ''
+      });
+
+      setUploadMessage(`${imageType === 'seal' ? 'Seal photo' : `${imageType === 'primary' ? 'Primary' : 'Secondary'} logo`} removed successfully!`);
+      setTimeout(() => setUploadMessage(''), 3000);
+    } catch (error) {
+      setUploadMessage(`Remove failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -242,7 +274,7 @@ export default function Details({ initialValues = {} }: DetailsProps) {
       updateSettings(settingsToSave);
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert(`Failed to save: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setUploadMessage(`Save failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -322,14 +354,26 @@ export default function Details({ initialValues = {} }: DetailsProps) {
                 <p className="logo-info">Max file size: 500KB</p>
               </div>
             )}
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => handleUploadLogo('primary')}
-              disabled={isUploading}
-            >
-              {isUploading ? 'Uploading...' : 'Upload Primary Logo'}
-            </button>
+            <div className="logo-upload-actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => handleUploadLogo('primary')}
+                disabled={!!uploadingTarget}
+              >
+                {uploadingTarget === 'primary' ? 'Uploading...' : 'Upload Primary Logo'}
+              </button>
+              {primaryLogoBase64 && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemoveImage('primary')}
+                  disabled={!!uploadingTarget}
+                >
+                  Remove Primary Logo
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -347,14 +391,26 @@ export default function Details({ initialValues = {} }: DetailsProps) {
                 <p className="logo-info">Max file size: 500KB</p>
               </div>
             )}
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => handleUploadLogo('secondary')}
-              disabled={isUploading}
-            >
-              {isUploading ? 'Uploading...' : 'Upload Secondary Logo'}
-            </button>
+            <div className="logo-upload-actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => handleUploadLogo('secondary')}
+                disabled={!!uploadingTarget}
+              >
+                {uploadingTarget === 'secondary' ? 'Uploading...' : 'Upload Secondary Logo'}
+              </button>
+              {secondaryLogoBase64 && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemoveImage('secondary')}
+                  disabled={!!uploadingTarget}
+                >
+                  Remove Secondary Logo
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -372,14 +428,26 @@ export default function Details({ initialValues = {} }: DetailsProps) {
                 <p className="logo-info">Max file size: 900KB (PNG, JPG, JPEG, SVG)</p>
               </div>
             )}
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleUploadSealPhoto}
-              disabled={isUploading}
-            >
-              {isUploading ? 'Uploading...' : 'Upload Seal Photo'}
-            </button>
+            <div className="logo-upload-actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleUploadSealPhoto}
+                disabled={!!uploadingTarget}
+              >
+                {uploadingTarget === 'seal' ? 'Uploading...' : 'Upload Seal Photo'}
+              </button>
+              {sealPhotoBase64 && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemoveImage('seal')}
+                  disabled={!!uploadingTarget}
+                >
+                  Remove Seal Photo
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -402,4 +470,3 @@ export default function Details({ initialValues = {} }: DetailsProps) {
     </div>
   );
 }
-

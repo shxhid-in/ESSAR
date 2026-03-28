@@ -170,9 +170,9 @@ export default function RevenueAnalytics() {
         ) : (
           (() => {
             const invoices = allInvoices || [];
-            const totalBilled = invoices.reduce((sum, inv) => sum + (inv.grandTotal || 0), 0);
-            const totalCollected = invoices.reduce((sum, inv) => sum + (inv.amountPaid || 0), 0);
-            const totalOutstanding = invoices.reduce((sum, inv) => sum + (inv.remainingBalance || 0), 0);
+            const totalBilled = invoices.reduce((sum: number, inv: any) => sum + (inv.grandTotal || 0), 0);
+            const totalCollected = invoices.reduce((sum: number, inv: any) => sum + (inv.amountPaid || 0), 0);
+            const totalOutstanding = invoices.reduce((sum: number, inv: any) => sum + (inv.remainingBalance || 0), 0);
             const collectionRate = totalBilled > 0 ? (totalCollected / totalBilled) * 100 : 0;
 
             return (

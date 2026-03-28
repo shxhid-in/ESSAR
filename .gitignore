@@ -34,3 +34,5 @@ dist-electron
 dist-react
 
 test-results
+
+AGENTS.md

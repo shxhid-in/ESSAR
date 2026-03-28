@@ -72,10 +72,10 @@ const getSVGLogoBase64 = (): string | null => {
 // Method 3: Text Logo (Final Fallback)
 const getTextLogoBase64 = async (): Promise<string> => {
   // Get company name from settings for text logo fallback
-  let companyName = 'ESSAR TRAVEL HUB';
+  let companyName = 'Company';
   try {
     const settings = await (window.electronAPI as any).getSettings();
-    companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+    companyName = (settings.company_name || '').trim() || 'Company';
   } catch (error) {
     console.warn('Failed to load company name for text logo:', error);
   }
@@ -129,14 +129,14 @@ const getSealPhotoAsBase64 = async (): Promise<string> => {
 export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
   // Get company details and primary logo from settings
   let logoBase64 = '';
-  let companyName = 'ESSAR TRAVEL HUB';
+  let companyName = 'Company';
   let contactDetails = '';
   let companyAddress = '';
   let thankYouNote = 'THANKS FOR DOING BUSINESS WITH US';
   
   try {
     const settings = await (window.electronAPI as any).getSettings();
-    companyName = settings.company_name || 'ESSAR TRAVEL HUB';
+    companyName = (settings.company_name || '').trim() || 'Company';
     contactDetails = settings.company_contact_details || '';
     companyAddress = settings.company_address || '';
     thankYouNote = settings.thank_you_note || 'THANKS FOR DOING BUSINESS WITH US';
@@ -188,7 +188,9 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
             margin-bottom: 15px;
           }
           .logo {
-            max-width: 40%;
+            max-width: 260px;
+            max-height: 90px;
+            width: auto;
             height: auto;
             object-fit: contain;
           }
@@ -353,15 +355,18 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
             color: #666;
           }
           .signature-image {
-            max-width: 100%;
+            max-width: 260px;
+            max-height: 100px;
+            width: auto;
             height: auto;
             object-fit: contain;
             margin: 5px 0;
           }
           .address-footer {
             text-align: center;
-            font-size: 12px;
-            margin-top: 8px;
+            font-size: 13px;
+            font-weight: normal;
+            margin: 8px 0;
             line-height: 1.4;
             color: #666;
           }
@@ -485,13 +490,12 @@ export const generateInvoiceHTML = async (invoice: any): Promise<string> => {
               </div>
             </div>
             
-            <div class="separator-line"></div>
-            
             ${companyAddress ? `
             <div class="separator-line"></div>
-              ${companyAddress}
             <div class="address-footer">
+              ${companyAddress}
             </div>
+            <div class="separator-line"></div>
             ` : ''}
           </div>
         </div>
@@ -661,4 +665,3 @@ export const downloadInvoicePDFModern = async (invoice: any) => {
     throw error;
   }
 };
-
